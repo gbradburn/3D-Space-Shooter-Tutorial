@@ -5,7 +5,8 @@ using UnityEngine;
 public class DesktopMovementControls : MovementControlsBase
 {
     [SerializeField] float _deadZoneRadius = 0.1f;
-    
+    float _rollAmount = 0;
+
     Vector2 ScreenCenter => new Vector2(Screen.width * 0.5f, Screen.height * 0.5f);
 
     public override float YawAmount
@@ -33,12 +34,18 @@ public class DesktopMovementControls : MovementControlsBase
     {
         get
         {
+            float roll;
             if (Input.GetKey(KeyCode.Q))
             {
-                return 1f;
+                roll =  1f;
+            }
+            else
+            {
+                roll = Input.GetKey(KeyCode.E) ? -1f : 0f;
             }
 
-            return Input.GetKey(KeyCode.E) ? -1f : 0f;
+            _rollAmount = Mathf.Lerp(_rollAmount, roll, Time.deltaTime * 3f);
+            return _rollAmount;
         } 
         
     }

@@ -1,0 +1,11 @@
+Unity Hub:
+https://unity.com/download
+
+Asset Store Packages:
+SpaceSkies Free
+Hi-Rez Spaceships Creator Free Sample: https://assetstore.unity.com/packages/3d/vehicles/space/hi-rez-spaceships-creator-free-sample-153363
+Free SF Fighter: https://assetstore.unity.com/packages/3d/vehicles/space/free-sf-fighter-11711#description
+3D Games Effects Pack Free: https://assetstore.unity.com/packages/vfx/particles/3d-games-effects-pack-free-42285
+
+
+Cinemachine
