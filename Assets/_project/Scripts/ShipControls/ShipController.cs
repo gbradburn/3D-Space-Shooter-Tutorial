@@ -1,14 +1,12 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
 public class ShipController : MonoBehaviour
 {
- //   [InlineEditor(InlineEditorObjectFieldModes.Boxed)]
+    [InlineEditor(InlineEditorObjectFieldModes.Boxed)]
     [SerializeField] 
-    //[Required] 
+    [Required] 
     ShipMovementInput _movementInput;
     
     [BoxGroup("Ship movement values")] [SerializeField] [Range(1000f, 10000f)]
@@ -17,9 +15,12 @@ public class ShipController : MonoBehaviour
         _rollForce = 1000f,
         _yawForce = 2000f;
 
+    [BoxGroup("Ship components")] [SerializeField] [Required]
+    List<ShipEngine> _engines;
+
     Rigidbody _rigidBody;
     [ShowInInspector] [Range(-1f, 1f)]
-    float _thrustAmount, _pitchAmount, _rollAmount, _yawAmount = 0f;
+    float _pitchAmount, _rollAmount, _yawAmount = 0f;
 
     IMovementControls ControlInput => _movementInput.MovementControls;
 
@@ -27,10 +28,16 @@ public class ShipController : MonoBehaviour
     {
         _rigidBody = GetComponent<Rigidbody>();
     }
+    void Start()
+    {
+        foreach (ShipEngine engine in _engines)
+        {
+            engine.Init(ControlInput, _rigidBody, _thrustForce / _engines.Count);
+        }
+    }
 
     void Update()
     {
-        _thrustAmount = ControlInput.ThrustAmount;
         _rollAmount = ControlInput.RollAmount;
         _yawAmount = ControlInput.YawAmount;
         _pitchAmount = ControlInput.PitchAmount;
@@ -51,11 +58,6 @@ public class ShipController : MonoBehaviour
         if (!Mathf.Approximately(0f, _yawAmount))
         {
             _rigidBody.AddTorque(transform.up * (_yawAmount * _yawForce * Time.fixedDeltaTime));
-        }
-
-        if (!Mathf.Approximately(0f, _thrustAmount))
-        {
-            _rigidBody.AddForce(transform.forward * (_thrustForce * _thrustAmount * Time.fixedDeltaTime));
         }
     }
 }
