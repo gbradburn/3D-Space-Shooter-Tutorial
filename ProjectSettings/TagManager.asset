@@ -13,13 +13,13 @@ TagManager:
   - Background
   - Water
   - UI
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
+  - Player
+  - PlayerProjectile
+  - PlayerShield
+  - Enemy
+  - EnemyProjectile
+  - EnemyShield
+  - Asteroid
   - 
   - 
   - 
