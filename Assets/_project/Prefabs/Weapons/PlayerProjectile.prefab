@@ -361,3 +361,4 @@ MonoBehaviour:
   _launchForce: 10000
   _damage: 100
   _range: 2
+  _hitEffect: {fileID: 6886602789826667339, guid: a08b2b1696d8599499c11d9ca22bea17, type: 3}
