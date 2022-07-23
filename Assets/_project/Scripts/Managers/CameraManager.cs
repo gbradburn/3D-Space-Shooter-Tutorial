@@ -43,11 +43,9 @@ public class CameraManager : MonoBehaviour
     {
         if (activeCamera == VirtualCameras.NoCamera)
         {
-            Debug.Log("No camera");
             return;
         }
         
-        Debug.Log($"${activeCamera.ToString()}");
         foreach (GameObject cam in _virtualCameras)
         {
             cam.SetActive(cam.tag.Equals(activeCamera.ToString()));
