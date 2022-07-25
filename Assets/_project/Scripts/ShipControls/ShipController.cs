@@ -1,13 +1,15 @@
 using System.Collections.Generic;
 using Sirenix.OdinInspector;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 public class ShipController : MonoBehaviour
 {
+    [FormerlySerializedAs("_movementInput")]
     [InlineEditor(InlineEditorObjectFieldModes.Boxed)]
     [SerializeField] 
     [Required] 
-    ShipMovementInput _movementInput;
+    ShipInputControls _inputControls;
     
     [BoxGroup("Ship movement values")] [SerializeField] [Range(1000f, 10000f)]
     float _thrustForce = 7500f,
@@ -18,11 +20,18 @@ public class ShipController : MonoBehaviour
     [BoxGroup("Ship components")] [SerializeField] [Required]
     List<ShipEngine> _engines;
 
+    [BoxGroup("Ship components")] [SerializeField]
+    List<Blaster> _blasters;
+
+    [BoxGroup("Ship components")] [SerializeField]
+    private AnimateCockpitControls _cockpitAnimationControls;
+    
     Rigidbody _rigidBody;
     [ShowInInspector] [Range(-1f, 1f)]
     float _pitchAmount, _rollAmount, _yawAmount = 0f;
 
-    IMovementControls ControlInput => _movementInput.MovementControls;
+    IMovementControls MovementInput => _inputControls.MovementControls;
+    IWeaponControls WeaponInput => _inputControls.WeaponControls;
 
     void Awake()
     {
@@ -32,15 +41,25 @@ public class ShipController : MonoBehaviour
     {
         foreach (ShipEngine engine in _engines)
         {
-            engine.Init(ControlInput, _rigidBody, _thrustForce / _engines.Count);
+            engine.Init(MovementInput, _rigidBody, _thrustForce / _engines.Count);
+        }
+
+        foreach (Blaster blaster in _blasters)
+        {
+            blaster.Init(WeaponInput);
+        }
+
+        if (_cockpitAnimationControls != null)
+        {
+            _cockpitAnimationControls.Init(MovementInput);
         }
     }
 
     void Update()
     {
-        _rollAmount = ControlInput.RollAmount;
-        _yawAmount = ControlInput.YawAmount;
-        _pitchAmount = ControlInput.PitchAmount;
+        _rollAmount = MovementInput.RollAmount;
+        _yawAmount = MovementInput.YawAmount;
+        _pitchAmount = MovementInput.PitchAmount;
     }
 
     void FixedUpdate()

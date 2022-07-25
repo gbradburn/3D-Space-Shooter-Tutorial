@@ -10,6 +10,8 @@ public class Blaster : MonoBehaviour
     [SerializeField] Transform _muzzle;
     [SerializeField] [Range(0f, 5f)] float _coolDownTime = 0.25f;
 
+    private IWeaponControls _weaponInput;
+    
     bool CanFire
     {
         get
@@ -24,15 +26,22 @@ public class Blaster : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (CanFire && Input.GetMouseButton(0))
+        if (_weaponInput == null) return;
+        if (CanFire && _weaponInput.PrimaryFired)
         {
             FireProjectile();
         } 
     }
 
+    public void Init(IWeaponControls weaponInput)
+    {
+        _weaponInput = weaponInput;
+    }
+    
     void FireProjectile()
     {
         _coolDown = _coolDownTime;
         Instantiate(_projectilePrefab, _muzzle.position, transform.rotation);
     }
+
 }
