@@ -371,7 +371,7 @@ MonoBehaviour:
     ModeOverride: 0
     LensShift: {x: 0, y: 0}
     GateFit: 2
-    m_SensorSize: {x: 1.1888889, y: 1}
+    m_SensorSize: {x: 1.1258742, y: 1}
   m_Transitions:
     m_BlendHint: 0
     m_InheritPosition: 0
@@ -3636,7 +3636,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &1923963286979488523
 Transform:
   m_ObjectHideFlags: 0
@@ -3669,7 +3669,7 @@ Transform:
   - {fileID: 1922413659997705101}
   - {fileID: 2041266149}
   m_Father: {fileID: 0}
-  m_RootOrder: 4
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!54 &640230474
 Rigidbody:
@@ -8480,7 +8480,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 17b13af2768067b489d67d2631c4ee74, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _movementInput: {fileID: 2041266148}
+  _inputControls: {fileID: 2041266148}
   _thrustForce: 7500
   _pitchForce: 3000
   _rollForce: 1000
@@ -8488,6 +8488,10 @@ MonoBehaviour:
   _engines:
   - {fileID: 650733870}
   - {fileID: 1474903369}
+  _blasters:
+  - {fileID: 4146624600826614403}
+  - {fileID: 5728411921826041187}
+  _cockpitAnimationControls: {fileID: 859332732}
 --- !u!1 &1925693871463054089
 GameObject:
   m_ObjectHideFlags: 0
@@ -13478,7 +13482,6 @@ MonoBehaviour:
   - {fileID: 1924159698260388653}
   - {fileID: 1923797629026332697}
   _throttleRange: 35
-  _movementInput: {fileID: 2041266148}
 --- !u!1 &1927381608967756611
 GameObject:
   m_ObjectHideFlags: 0

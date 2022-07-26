@@ -16,11 +16,11 @@ public class GameManager : MonoBehaviour
     {
         if (ShouldQuitGame)
         {
-            ShouldGame();
+            QuitGame();
         }
     }
 
-    void ShouldGame()
+    void QuitGame()
     {
 #if UNITY_EDITOR
         UnityEditor.EditorApplication.isPlaying = false;
