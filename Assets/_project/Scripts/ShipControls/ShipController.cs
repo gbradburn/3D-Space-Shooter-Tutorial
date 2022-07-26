@@ -10,13 +10,11 @@ public class ShipController : MonoBehaviour
     [SerializeField] 
     [Required] 
     ShipInputControls _inputControls;
-    
-    [BoxGroup("Ship movement values")] [SerializeField] [Range(1000f, 10000f)]
-    float _thrustForce = 7500f,
-        _pitchForce = 6000f,
-        _rollForce = 1000f,
-        _yawForce = 2000f;
 
+    [InlineEditor(InlineEditorObjectFieldModes.Foldout)]
+    [SerializeField] [Required]
+    ShipDataSo _shipData;
+    
     [BoxGroup("Ship components")] [SerializeField] [Required]
     List<ShipEngine> _engines;
 
@@ -41,12 +39,12 @@ public class ShipController : MonoBehaviour
     {
         foreach (ShipEngine engine in _engines)
         {
-            engine.Init(MovementInput, _rigidBody, _thrustForce / _engines.Count);
+            engine.Init(MovementInput, _rigidBody, _shipData.ThrustForce / _engines.Count);
         }
 
         foreach (Blaster blaster in _blasters)
         {
-            blaster.Init(WeaponInput);
+            blaster.Init(WeaponInput, _shipData.BlasterCooldown, _shipData.BlasterLaunchForce, _shipData.BlasterProjectileDuration, _shipData.BlasterDamage);
         }
 
         if (_cockpitAnimationControls != null)
@@ -66,17 +64,17 @@ public class ShipController : MonoBehaviour
     {
         if (!Mathf.Approximately(0f, _pitchAmount))
         {
-            _rigidBody.AddTorque(transform.right * (_pitchForce * _pitchAmount * Time.fixedDeltaTime));
+            _rigidBody.AddTorque(transform.right * (_shipData.PitchForce * _pitchAmount * Time.fixedDeltaTime));
         }
 
         if (!Mathf.Approximately(0f, _rollAmount))
         {
-            _rigidBody.AddTorque(transform.forward * (_rollForce * _rollAmount * Time.fixedDeltaTime));
+            _rigidBody.AddTorque(transform.forward * (_shipData.RollForce * _rollAmount * Time.fixedDeltaTime));
         }
 
         if (!Mathf.Approximately(0f, _yawAmount))
         {
-            _rigidBody.AddTorque(transform.up * (_yawAmount * _yawForce * Time.fixedDeltaTime));
+            _rigidBody.AddTorque(transform.up * (_yawAmount * _shipData.YawForce * Time.fixedDeltaTime));
         }
     }
 }

@@ -214,7 +214,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 167858118}
-  m_LocalRotation: {x: -0.014666163, y: 0.0000000013031147, z: 1.9113749e-11, w: 0.9998925}
+  m_LocalRotation: {x: -0.0146661615, y: 6.7936967e-10, z: 9.964815e-12, w: 0.9998925}
   m_LocalPosition: {x: 0, y: 2.5, z: -20}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -252,7 +252,7 @@ MonoBehaviour:
     ModeOverride: 0
     LensShift: {x: 0, y: 0}
     GateFit: 2
-    m_SensorSize: {x: 1.1258742, y: 1}
+    m_SensorSize: {x: 0.94561934, y: 1}
   m_Transitions:
     m_BlendHint: 0
     m_InheritPosition: 0
@@ -555,6 +555,10 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 640230475, guid: 79688ce591ec68340a0d00aacb588905, type: 3}
+      propertyPath: _shipData
+      value: 
+      objectReference: {fileID: 11400000, guid: 727060f8e1b7c0c4db82dfe5e59a7c8f, type: 2}
+    - target: {fileID: 640230475, guid: 79688ce591ec68340a0d00aacb588905, type: 3}
       propertyPath: _blasters.Array.size
       value: 2
       objectReference: {fileID: 0}
@@ -566,9 +570,17 @@ PrefabInstance:
       propertyPath: _blasters.Array.data[1]
       value: 
       objectReference: {fileID: 545022264}
+    - target: {fileID: 2129387925, guid: 79688ce591ec68340a0d00aacb588905, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0.09
+      objectReference: {fileID: 0}
+    - target: {fileID: 2129387926, guid: 79688ce591ec68340a0d00aacb588905, type: 3}
+      propertyPath: m_Lens.NearClipPlane
+      value: 0.18
+      objectReference: {fileID: 0}
     - target: {fileID: 2129387926, guid: 79688ce591ec68340a0d00aacb588905, type: 3}
       propertyPath: m_Lens.m_SensorSize.x
-      value: 1.1258742
+      value: 0.7728395
       objectReference: {fileID: 0}
     - target: {fileID: 1923963286979488523, guid: 79688ce591ec68340a0d00aacb588905, type: 3}
       propertyPath: m_RootOrder
@@ -767,8 +779,8 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1154880823}
-  m_LocalRotation: {x: -0.043619405, y: -0, z: -0, w: 0.9990483}
-  m_LocalPosition: {x: 0, y: 0.969, z: 0.07799399}
+  m_LocalRotation: {x: -0.0146661615, y: 6.7936967e-10, z: 9.964815e-12, w: 0.9998925}
+  m_LocalPosition: {x: 0, y: 2.5, z: -20}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -842,7 +854,7 @@ Camera:
     height: 1
   near clip plane: 0.3
   far clip plane: 1000
-  field of view: 93.69
+  field of view: 63.47
   orthographic: 0
   orthographic size: 5
   m_Depth: 0
@@ -1091,6 +1103,10 @@ PrefabInstance:
     - target: {fileID: 2308167969746517441, guid: 070ac406919d6624d99c75e3558985c3, type: 3}
       propertyPath: m_Name
       value: Shield
+      objectReference: {fileID: 0}
+    - target: {fileID: 2308167969746517441, guid: 070ac406919d6624d99c75e3558985c3, type: 3}
+      propertyPath: m_Layer
+      value: 11
       objectReference: {fileID: 0}
     - target: {fileID: 5495328748809494636, guid: 070ac406919d6624d99c75e3558985c3, type: 3}
       propertyPath: _maxHealth
