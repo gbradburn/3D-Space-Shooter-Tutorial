@@ -5,11 +5,14 @@ using UnityEngine.Serialization;
 
 public class ShipController : MonoBehaviour
 {
-    [FormerlySerializedAs("_movementInput")]
-    [InlineEditor(InlineEditorObjectFieldModes.Boxed)]
-    [SerializeField] 
-    [Required] 
-    ShipInputControls _inputControls;
+    [BoxGroup("Ship input controls")]
+    [InlineEditor(InlineEditorObjectFieldModes.Foldout)]
+    [SerializeField]
+    [Required]
+    MovementControlsBase _movementControls;
+
+    [BoxGroup("Ship input controls")] [InlineEditor(InlineEditorObjectFieldModes.Foldout)] [SerializeField] [Required]
+    WeaponControlsBase _weaponControls;    
 
     [InlineEditor(InlineEditorObjectFieldModes.Foldout)]
     [SerializeField] [Required]
@@ -28,8 +31,8 @@ public class ShipController : MonoBehaviour
     [ShowInInspector] [Range(-1f, 1f)]
     float _pitchAmount, _rollAmount, _yawAmount = 0f;
 
-    IMovementControls MovementInput => _inputControls.MovementControls;
-    IWeaponControls WeaponInput => _inputControls.WeaponControls;
+    IMovementControls MovementInput => _movementControls;
+    IWeaponControls WeaponInput => _weaponControls;
 
     void Awake()
     {
