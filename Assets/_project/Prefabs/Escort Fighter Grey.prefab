@@ -3585,7 +3585,7 @@ GameObject:
   - component: {fileID: 640230476}
   - component: {fileID: 640230475}
   m_Layer: 6
-  m_Name: Escort Fighter
+  m_Name: Escort Fighter Grey
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
