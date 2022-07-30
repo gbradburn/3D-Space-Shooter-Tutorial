@@ -1,3 +1,4 @@
+using System;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
@@ -27,7 +28,7 @@ public class AIShipMovementControls : MovementControlsBase
 
     public Vector3 _localDirection;
     public float _distanceToTarget;
-    public float _pitch, _yaw;
+    public float _pitch, _yaw, _thrustAmount;
     Transform _transform;
 
     void Awake()
@@ -53,16 +54,20 @@ public class AIShipMovementControls : MovementControlsBase
 
     float GetPitchAmount()
     {
-        return 0f;
+        if (!_target || !_enablePitch) return 0f;
+        _pitch = Vector3.Angle(Vector3.down, _localDirection) - 90f;
+        return _pitchPidController.Update(Time.deltaTime, _pitch, 0f);
     }
 
     float GetRollAmount()
     {
-        return 0f;
+        if (!_target) return 0f;
+        return Math.Abs(_yaw) > 0.25f ? _yaw * -1 : 0f;
     }
 
     float GetThrustAmount()
     {
-        return 0f;
+        _thrustAmount = Mathf.Lerp(_thrustAmount, _distanceToTarget > 100f ? 1f : 0f, Time.deltaTime);
+        return _thrustAmount;
     }
 }

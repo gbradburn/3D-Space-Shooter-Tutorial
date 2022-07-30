@@ -9,7 +9,8 @@ public class CameraManager : MonoBehaviour
     {
         NoCamera = -1,
         CockpitCamera = 0,
-        FollowCamera
+        FollowCamera = 1,
+        EnemyFollowCamera = 2,
     }
 
     [BoxGroup("Virtual cameras")] [SerializeField] [Required]
