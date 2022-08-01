@@ -264,51 +264,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ac0b09e7857660247b1477e93731de29, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!1 &2041266147
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 2041266149}
-  - component: {fileID: 2041266148}
-  m_Layer: 6
-  m_Name: ShipMovementInput
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &2041266149
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2041266147}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 1923963286979488523}
-  m_RootOrder: -1
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &2041266148
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2041266147}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 82264533b96016e42b93f82f0ad4c20f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _inputType: 0
 --- !u!1 &2129387924
 GameObject:
   m_ObjectHideFlags: 0
@@ -371,7 +326,7 @@ MonoBehaviour:
     ModeOverride: 0
     LensShift: {x: 0, y: 0}
     GateFit: 2
-    m_SensorSize: {x: 1.1258742, y: 1}
+    m_SensorSize: {x: 0.94561934, y: 1}
   m_Transitions:
     m_BlendHint: 0
     m_InheritPosition: 0
@@ -2745,7 +2700,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _projectilePrefab: {fileID: -7897133063940397059, guid: f4c431712659b0f408045e153ac96448, type: 3}
   _muzzle: {fileID: 7193999602862850294}
-  _coolDownTime: 0.25
 --- !u!1 &1925586594301030063
 GameObject:
   m_ObjectHideFlags: 0
@@ -3631,7 +3585,7 @@ GameObject:
   - component: {fileID: 640230476}
   - component: {fileID: 640230475}
   m_Layer: 6
-  m_Name: Escort Fighter
+  m_Name: Escort Fighter Grey
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3667,9 +3621,8 @@ Transform:
   - {fileID: 1922369165270355539}
   - {fileID: 1923613683353331183}
   - {fileID: 1922413659997705101}
-  - {fileID: 2041266149}
   m_Father: {fileID: 0}
-  m_RootOrder: 3
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!54 &640230474
 Rigidbody:
@@ -8480,11 +8433,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 17b13af2768067b489d67d2631c4ee74, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _inputControls: {fileID: 2041266148}
-  _thrustForce: 7500
-  _pitchForce: 3000
-  _rollForce: 1000
-  _yawForce: 2000
+  _inputControls: {fileID: 0}
+  _shipData: {fileID: 0}
   _engines:
   - {fileID: 650733870}
   - {fileID: 1474903369}
@@ -8719,7 +8669,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _projectilePrefab: {fileID: -7897133063940397059, guid: f4c431712659b0f408045e153ac96448, type: 3}
   _muzzle: {fileID: 5422502603883262909}
-  _coolDownTime: 0.25
 --- !u!1 &1925708008428139369
 GameObject:
   m_ObjectHideFlags: 0
