@@ -35,7 +35,6 @@ public class Blaster : MonoBehaviour
 
     public void Init(IWeaponControls weaponInput, float coolDown, int launchForce, float duration, int damage)
     {
-        Debug.Log($"Blaster.Init({weaponInput}, {coolDown}, launchForce, {duration}");
         _weaponInput = weaponInput;
         _coolDownTime = coolDown;
         _launchForce = launchForce;

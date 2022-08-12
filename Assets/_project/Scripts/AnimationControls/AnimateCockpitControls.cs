@@ -9,7 +9,7 @@ public class AnimateCockpitControls : MonoBehaviour
     Transform _joystick;
     
     [BoxGroup("Flight control transforms and ranges")] [Required] [SerializeField] 
-    Vector3 _joystickRange = Vector3.zero;
+    Vector3 _joystickRange = new Vector3(35,35,35);
 
     [BoxGroup("Flight control transforms and ranges")] [Required] [SerializeField]
     List<Transform> _throttles;
