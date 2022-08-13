@@ -11,9 +11,9 @@ GameObject:
   - component: {fileID: 6086309084244755335}
   - component: {fileID: 1423744255962983072}
   - component: {fileID: 5856475624409997298}
-  - component: {fileID: 137586462141484731}
   - component: {fileID: 725291530066673247}
   - component: {fileID: 6738830386753980225}
+  - component: {fileID: -5142852349988003154}
   m_Layer: 12
   m_Name: Rock1
   m_TagString: Untagged
@@ -86,20 +86,6 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!64 &137586462141484731
-MeshCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4800253088770530781}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 4
-  m_Convex: 1
-  m_CookingOptions: 30
-  m_Mesh: {fileID: -6938710573835471721, guid: ba8ad55c52432c9458973a60328b3451, type: 3}
 --- !u!54 &725291530066673247
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -130,3 +116,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _fracturedAsteroidPrefab: {fileID: 6663420446951431894, guid: e8fb685ed452db5409d7018d6f9e4c58, type: 3}
   _explosionPrefab: {fileID: 8844277550991517175, guid: b0a4745119c2c7847b41fec5702ab773, type: 3}
+--- !u!136 &-5142852349988003154
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4800253088770530781}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  m_Radius: 1.3639505
+  m_Height: 3.178595
+  m_Direction: 1
+  m_Center: {x: 0.1767565, y: -0.024088502, z: -0.29198048}
