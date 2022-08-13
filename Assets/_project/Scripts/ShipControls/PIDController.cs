@@ -13,11 +13,11 @@ public class PIDController
 
     [BoxGroup("PID Parameters")] [SerializeField]
     float 
-        _proportionalGain, 
+        _proportionalGain = 0.5f, 
         _integralGain, 
-        _derivativeGain,
-        _minOutput,
-        _maxOutput,
+        _derivativeGain =0.1f,
+        _minOutput = -1f,
+        _maxOutput = 1f,
         _integralSaturation;
 
     [BoxGroup("PID Parameters")] [SerializeField]

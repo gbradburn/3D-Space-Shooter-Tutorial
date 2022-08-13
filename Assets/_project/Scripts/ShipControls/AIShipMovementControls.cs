@@ -74,7 +74,7 @@ public class AIShipMovementControls : MovementControlsBase
     {
         if (!_target) return 0f;
         if (!Mathf.Approximately(0f, _verticalAvoidance) || !Mathf.Approximately(0f, _horizontalAvoidance)) return 0f;
-        return Math.Abs(_yaw) > 0.25f ? _yaw * -1 : 0f;
+        return Math.Abs(_yaw) > 0.25f ? _yawAmount * -1 : 0f;
     }
 
     float GetThrustAmount()
