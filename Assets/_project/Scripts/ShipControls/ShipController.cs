@@ -1,35 +1,33 @@
+using System;
 using System.Collections.Generic;
-using Sirenix.OdinInspector;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 public class ShipController : MonoBehaviour
 {
-    [BoxGroup("Ship input controls")]
-    [InlineEditor(InlineEditorObjectFieldModes.Foldout)]
     [SerializeField]
-    [Required]
     MovementControlsBase _movementControls;
 
-    [BoxGroup("Ship input controls")] [InlineEditor(InlineEditorObjectFieldModes.Foldout)] [SerializeField] [Required]
+    [SerializeField]
     WeaponControlsBase _weaponControls;    
 
-    [InlineEditor(InlineEditorObjectFieldModes.Foldout)]
-    [SerializeField] [Required]
+    [SerializeField]
     ShipDataSo _shipData;
     
-    [BoxGroup("Ship components")] [SerializeField] [Required]
+    [SerializeField]
     List<ShipEngine> _engines;
 
-    [BoxGroup("Ship components")] [SerializeField]
+    [SerializeField]
     List<Blaster> _blasters;
 
-    [BoxGroup("Ship components")] [SerializeField]
+    [SerializeField]
     private AnimateCockpitControls _cockpitAnimationControls;
     
     Rigidbody _rigidBody;
-    [ShowInInspector] [Range(-1f, 1f)]
+    [Range(-1f, 1f)]
     float _pitchAmount, _rollAmount, _yawAmount = 0f;
+
+    DamageHandler _damageHandler;
+    
 
     IMovementControls MovementInput => _movementControls;
     IWeaponControls WeaponInput => _weaponControls;
@@ -37,6 +35,7 @@ public class ShipController : MonoBehaviour
     void Awake()
     {
         _rigidBody = GetComponent<Rigidbody>();
+        _damageHandler = GetComponent<DamageHandler>();
     }
     void Start()
     {
@@ -54,6 +53,14 @@ public class ShipController : MonoBehaviour
         {
             _cockpitAnimationControls.Init(MovementInput);
         }
+    }
+
+    void OnEnable()
+    {
+        if (_damageHandler == null) return;
+        _damageHandler.Init(_shipData.MaxHealth);
+        _damageHandler.HealthChanged.AddListener(OnHealthChanged);
+        _damageHandler.ObjectDestroyed.AddListener(DestroyShip);
     }
 
     void Update()
@@ -80,4 +87,16 @@ public class ShipController : MonoBehaviour
             _rigidBody.AddTorque(transform.up * (_yawAmount * _shipData.YawForce * Time.fixedDeltaTime));
         }
     }
+    
+    void DestroyShip()
+    {
+        gameObject.SetActive(false);
+    }
+
+    void OnHealthChanged()
+    {
+        Debug.Log($"{gameObject.name} health is {_damageHandler.Health}/{_damageHandler.MaxHealth}");
+    }
+
+
 }

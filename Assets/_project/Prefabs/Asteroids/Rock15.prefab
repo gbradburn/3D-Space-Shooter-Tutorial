@@ -11,10 +11,9 @@ GameObject:
   - component: {fileID: 830099576241301941}
   - component: {fileID: 223223052841250384}
   - component: {fileID: 1841145920680601467}
-  - component: {fileID: 6962491213889052771}
-  - component: {fileID: 1140670390155115247}
   - component: {fileID: 5962143532768285266}
   - component: {fileID: 23953148507073218}
+  - component: {fileID: -6468118076750653186}
   m_Layer: 12
   m_Name: Rock15
   m_TagString: Untagged
@@ -87,33 +86,6 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!114 &6962491213889052771
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7497428207499797149}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b4b8c7d88eebb9940b3c4196017b84df, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  fractured: {fileID: 8842431829488770805, guid: 0df7f3e030f1da24a9abe74e81197585, type: 3}
---- !u!64 &1140670390155115247
-MeshCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7497428207499797149}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 4
-  m_Convex: 1
-  m_CookingOptions: 30
-  m_Mesh: {fileID: -2762817341601365711, guid: ba8ad55c52432c9458973a60328b3451, type: 3}
 --- !u!114 &5962143532768285266
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -144,3 +116,17 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!136 &-6468118076750653186
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7497428207499797149}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  m_Radius: 0.565027
+  m_Height: 1.0352161
+  m_Direction: 1
+  m_Center: {x: -0.039567754, y: -0.16248985, z: 0.053447425}

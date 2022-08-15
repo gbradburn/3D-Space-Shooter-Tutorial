@@ -11,10 +11,9 @@ GameObject:
   - component: {fileID: 1612375746253356653}
   - component: {fileID: 6506313837134050465}
   - component: {fileID: 2674636460938545398}
-  - component: {fileID: 3778588219552236094}
-  - component: {fileID: 749148108308249751}
   - component: {fileID: 6682065034619184853}
   - component: {fileID: 1801272336743757911}
+  - component: {fileID: -2170766127524626317}
   m_Layer: 12
   m_Name: Rock3
   m_TagString: Untagged
@@ -87,33 +86,6 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!114 &3778588219552236094
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 348038873700138510}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b4b8c7d88eebb9940b3c4196017b84df, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  fractured: {fileID: 523533613071711390, guid: 0ebf9f1968066d74e9a9f74696085d52, type: 3}
---- !u!64 &749148108308249751
-MeshCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 348038873700138510}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 4
-  m_Convex: 1
-  m_CookingOptions: 30
-  m_Mesh: {fileID: -3720551589674065424, guid: ba8ad55c52432c9458973a60328b3451, type: 3}
 --- !u!114 &6682065034619184853
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -144,3 +116,17 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!136 &-2170766127524626317
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 348038873700138510}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  m_Radius: 1.4755449
+  m_Height: 2.2706976
+  m_Direction: 1
+  m_Center: {x: 0.10416597, y: -0.42754215, z: 0.18341398}

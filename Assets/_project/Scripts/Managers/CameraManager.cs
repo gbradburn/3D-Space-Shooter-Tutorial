@@ -1,6 +1,4 @@
-using System.Collections;
 using System.Collections.Generic;
-using Sirenix.OdinInspector;
 using UnityEngine;
 
 public class CameraManager : MonoBehaviour
@@ -13,7 +11,7 @@ public class CameraManager : MonoBehaviour
         EnemyFollowCamera = 2,
     }
 
-    [BoxGroup("Virtual cameras")] [SerializeField] [Required]
+    [SerializeField]
     List<GameObject> _virtualCameras;
 
     VirtualCameras CameraKeyPressed

@@ -11,10 +11,9 @@ GameObject:
   - component: {fileID: 1374073917947629978}
   - component: {fileID: 71136420256227913}
   - component: {fileID: 779719623464241160}
-  - component: {fileID: 108418665961074504}
-  - component: {fileID: 4885401325220417166}
   - component: {fileID: 7193241771665147000}
   - component: {fileID: 4007282703037437415}
+  - component: {fileID: -8149430000330244157}
   m_Layer: 12
   m_Name: Rock2
   m_TagString: Untagged
@@ -87,33 +86,6 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!114 &108418665961074504
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 829862069003079374}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b4b8c7d88eebb9940b3c4196017b84df, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  fractured: {fileID: 6516070941938034013, guid: 8a0d737915eae7a4e8c4176987503064, type: 3}
---- !u!64 &4885401325220417166
-MeshCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 829862069003079374}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 4
-  m_Convex: 1
-  m_CookingOptions: 30
-  m_Mesh: {fileID: -5002652539513901180, guid: ba8ad55c52432c9458973a60328b3451, type: 3}
 --- !u!114 &7193241771665147000
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -144,3 +116,17 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!136 &-8149430000330244157
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 829862069003079374}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  m_Radius: 1.111527
+  m_Height: 2.2418761
+  m_Direction: 1
+  m_Center: {x: -0.042738974, y: 0.099664986, z: -0.1685198}

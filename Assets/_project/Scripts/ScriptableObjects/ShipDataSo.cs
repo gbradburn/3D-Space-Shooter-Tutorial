@@ -1,29 +1,28 @@
-using Sirenix.OdinInspector;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "ShipData", menuName = "3D Space Shooter/Ship Data", order = 1)]
 public class ShipDataSo : ScriptableObject
 {
-    [BoxGroup("Ship movement values")] [SerializeField] [Range(1000f, 10000f)]
+    [SerializeField] [Range(1000f, 10000f)]
     float _thrustForce = 7500f,
         _pitchForce = 6000f,
         _rollForce = 1000f,
         _yawForce = 2000f;
 
-    [BoxGroup("Ship component values")] [SerializeField]
+    [SerializeField]
     private int _shieldStrength = 5000,
         _shieldRegenAmount = 100,
         _maxHealth = 5000;
         
-    [BoxGroup("Ship component values")] [SerializeField] [Range(10, 1000)]         
+    [SerializeField] [Range(10, 1000)]         
     int _blasterDamage = 100;
     
     [Range(5000f, 25000f)]
-    [BoxGroup("Ship component values")] [SerializeField]
+    [SerializeField]
     int _blasterLaunchForce = 10000;
-    [BoxGroup("Ship component values")] [SerializeField]
+    [SerializeField]
     float _blasterCoolDown = 0.25f;
-    [BoxGroup("Ship component values")] [SerializeField] [Range(2f, 10f)]     
+    [SerializeField] [Range(2f, 10f)]     
     float _blasterProjectileDuration = 2f;
 
 

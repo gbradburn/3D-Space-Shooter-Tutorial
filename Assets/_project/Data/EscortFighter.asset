@@ -12,12 +12,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8b82177ff0cd76d439cc1969f6753b91, type: 3}
   m_Name: EscortFighter
   m_EditorClassIdentifier: 
-  _thrustForce: 7500
-  _pitchForce: 3000
+  _thrustForce: 7555
+  _pitchForce: 2000
   _rollForce: 1000
   _yawForce: 2000
   _shieldStrength: 5000
   _shieldRegenAmount: 100
-  _maxHealth: 5000
+  _maxHealth: 1000
   _blasterDamage: 100
+  _blasterLaunchForce: 10000
+  _blasterCoolDown: 0.25
   _blasterProjectileDuration: 2

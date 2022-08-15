@@ -1,20 +1,18 @@
-using System.Collections;
 using System.Collections.Generic;
-using Sirenix.OdinInspector;
 using UnityEngine;
 
 public class AnimateCockpitControls : MonoBehaviour
 {
-    [BoxGroup("Flight control transforms and ranges")] [Required] [SerializeField] 
+    [SerializeField] 
     Transform _joystick;
     
-    [BoxGroup("Flight control transforms and ranges")] [Required] [SerializeField] 
-    Vector3 _joystickRange = Vector3.zero;
+    [SerializeField] 
+    Vector3 _joystickRange = new Vector3(35,35,35);
 
-    [BoxGroup("Flight control transforms and ranges")] [Required] [SerializeField]
+    [SerializeField]
     List<Transform> _throttles;
 
-    [BoxGroup("Flight control transforms and ranges")] [Required] [SerializeField]
+    [SerializeField]
     float _throttleRange = 35f;
 
     private IMovementControls _movementInput;

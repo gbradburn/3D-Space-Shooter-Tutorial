@@ -1,5 +1,4 @@
 using System;
-using Sirenix.OdinInspector;
 using UnityEngine;
 
 [Serializable]
@@ -11,19 +10,19 @@ public class PIDController
         ErrorRateOfChange
     }
 
-    [BoxGroup("PID Parameters")] [SerializeField]
+    [SerializeField]
     float 
-        _proportionalGain, 
+        _proportionalGain = 0.5f, 
         _integralGain, 
-        _derivativeGain,
-        _minOutput,
-        _maxOutput,
+        _derivativeGain =0.1f,
+        _minOutput = -1f,
+        _maxOutput = 1f,
         _integralSaturation;
 
-    [BoxGroup("PID Parameters")] [SerializeField]
+    [SerializeField]
     DerivativeMeasurement _derivativeMeasurement;
 
-    [BoxGroup("PID Parameters")] [SerializeField]
+    [SerializeField]
     private bool _enablePid = true;
 
     public float _lastValue, _lastError, _integrationStored, _velocity;
