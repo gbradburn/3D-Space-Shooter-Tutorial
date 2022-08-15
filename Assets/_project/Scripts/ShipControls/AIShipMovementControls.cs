@@ -1,25 +1,24 @@
 using System;
-using Sirenix.OdinInspector;
 using UnityEngine;
 
 public class AIShipMovementControls : MovementControlsBase
 {
-    [BoxGroup("AI Ship Controls")] [SerializeField] 
+    [SerializeField] 
     Transform _target;
 
-    [BoxGroup("AI Ship Controls")] [SerializeField]
+    [SerializeField]
     bool _enableYaw = true;
 
-    [BoxGroup("AI Ship Controls")] [SerializeField]
+    [SerializeField]
     PIDController _yawPidController;
 
-    [BoxGroup("AI Ship Controls")] [SerializeField]
+    [SerializeField]
     bool _enablePitch = true;
 
-    [BoxGroup("AI Ship Controls")] [SerializeField]
+    [SerializeField]
     PIDController _pitchPidController;
 
-    [BoxGroup("AI Ship Controls")] [SerializeField] [InlineEditor(InlineEditorObjectFieldModes.Foldout)]
+    [SerializeField]
     CollisionAvoidance _collisionAvoidance;
     
     public override float YawAmount => _yawAmount;
@@ -33,7 +32,7 @@ public class AIShipMovementControls : MovementControlsBase
     public float _distanceToTarget;
     public float _pitch, _yaw, _thrust;
     Transform _transform;
-    [ShowInInspector] float _yawAmount, _pitchAmount, _rollAmount, _thrustAmount, _horizontalAvoidance, _verticalAvoidance;
+    float _yawAmount, _pitchAmount, _rollAmount, _thrustAmount, _horizontalAvoidance, _verticalAvoidance;
 
     void Awake()
     {

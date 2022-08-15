@@ -1,9 +1,8 @@
-using Sirenix.OdinInspector;
 using UnityEngine;
 
 public class Blaster : MonoBehaviour
 {
-    [SerializeField] [Required] Projectile _projectilePrefab;
+    [SerializeField] Projectile _projectilePrefab;
 
     [SerializeField] Transform _muzzle;
     

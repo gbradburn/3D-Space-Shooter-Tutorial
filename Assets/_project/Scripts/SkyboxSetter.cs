@@ -1,14 +1,9 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
-using Sirenix.OdinInspector;
 using UnityEngine;
 
 [RequireComponent(typeof(Skybox))]
 public class SkyboxSetter : MonoBehaviour
 {
-    [Required]
-    [PreviewField]
     [SerializeField] List<Material> _skyboxMaterials;
 
     Skybox _skybox;

@@ -1,13 +1,9 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using Sirenix.OdinInspector;
 using UnityEngine;
 
 public class Asteroid : MonoBehaviour, IDamageable
 {
     [SerializeField] private FracturedAsteroid _fracturedAsteroidPrefab;
-    [InlineEditor(InlineEditorObjectFieldModes.Boxed)] [SerializeField] private Detonator _explosionPrefab;
+    [SerializeField] private Detonator _explosionPrefab;
 
     private Transform _transform;
 

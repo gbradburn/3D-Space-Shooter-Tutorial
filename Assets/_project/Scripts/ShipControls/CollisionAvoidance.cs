@@ -1,4 +1,3 @@
-using Sirenix.OdinInspector;
 using UnityEngine;
 
 public class CollisionAvoidance : MonoBehaviour
@@ -12,9 +11,7 @@ public class CollisionAvoidance : MonoBehaviour
 
     public bool OnCollisionCourse => VerticalAvoidance != NoAvoidance || HorizontalAvoidance != NoAvoidance;
     
-    [ShowInInspector]
     public int VerticalAvoidance { get; private set; }
-    [ShowInInspector]
     public int HorizontalAvoidance { get; private set; }
 
     Transform _transform;

@@ -1,10 +1,8 @@
-using System;
-using Sirenix.OdinInspector;
 using UnityEngine;
 
 public class ShipEngine : MonoBehaviour
 {
-    [SerializeField] [Required] GameObject _thruster;
+    [SerializeField] GameObject _thruster;
 
     IMovementControls _shipMovementControls;
     Rigidbody _rigidbody;

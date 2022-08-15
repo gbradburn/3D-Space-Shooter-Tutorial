@@ -1,34 +1,28 @@
 using System.Collections.Generic;
-using Sirenix.OdinInspector;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 public class ShipController : MonoBehaviour
 {
-    [BoxGroup("Ship input controls")]
-    [InlineEditor(InlineEditorObjectFieldModes.Foldout)]
     [SerializeField]
-    [Required]
     MovementControlsBase _movementControls;
 
-    [BoxGroup("Ship input controls")] [InlineEditor(InlineEditorObjectFieldModes.Foldout)] [SerializeField] [Required]
+    [SerializeField]
     WeaponControlsBase _weaponControls;    
 
-    [InlineEditor(InlineEditorObjectFieldModes.Foldout)]
-    [SerializeField] [Required]
+    [SerializeField]
     ShipDataSo _shipData;
     
-    [BoxGroup("Ship components")] [SerializeField] [Required]
+    [SerializeField]
     List<ShipEngine> _engines;
 
-    [BoxGroup("Ship components")] [SerializeField]
+    [SerializeField]
     List<Blaster> _blasters;
 
-    [BoxGroup("Ship components")] [SerializeField]
+    [SerializeField]
     private AnimateCockpitControls _cockpitAnimationControls;
     
     Rigidbody _rigidBody;
-    [ShowInInspector] [Range(-1f, 1f)]
+    [Range(-1f, 1f)]
     float _pitchAmount, _rollAmount, _yawAmount = 0f;
 
     IMovementControls MovementInput => _movementControls;
