@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -25,12 +26,16 @@ public class ShipController : MonoBehaviour
     [Range(-1f, 1f)]
     float _pitchAmount, _rollAmount, _yawAmount = 0f;
 
+    DamageHandler _damageHandler;
+    
+
     IMovementControls MovementInput => _movementControls;
     IWeaponControls WeaponInput => _weaponControls;
 
     void Awake()
     {
         _rigidBody = GetComponent<Rigidbody>();
+        _damageHandler = GetComponent<DamageHandler>();
     }
     void Start()
     {
@@ -48,6 +53,14 @@ public class ShipController : MonoBehaviour
         {
             _cockpitAnimationControls.Init(MovementInput);
         }
+    }
+
+    void OnEnable()
+    {
+        if (_damageHandler == null) return;
+        _damageHandler.Init(_shipData.MaxHealth);
+        _damageHandler.HealthChanged.AddListener(OnHealthChanged);
+        _damageHandler.ObjectDestroyed.AddListener(DestroyShip);
     }
 
     void Update()
@@ -74,4 +87,16 @@ public class ShipController : MonoBehaviour
             _rigidBody.AddTorque(transform.up * (_yawAmount * _shipData.YawForce * Time.fixedDeltaTime));
         }
     }
+    
+    void DestroyShip()
+    {
+        gameObject.SetActive(false);
+    }
+
+    void OnHealthChanged()
+    {
+        Debug.Log($"{gameObject.name} health is {_damageHandler.Health}/{_damageHandler.MaxHealth}");
+    }
+
+
 }
