@@ -18,6 +18,11 @@ public class GameManager : MonoBehaviour
         {
             QuitGame();
         }
+
+        if (Input.GetKeyDown(KeyCode.F1))
+        {
+            Time.timeScale = 0f;
+        }
     }
 
     void QuitGame()
