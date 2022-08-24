@@ -1,9 +1,9 @@
-using System;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class ShipController : MonoBehaviour
 {
+    [SerializeField] Shield _shield;
     [SerializeField]
     MovementControlsBase _movementControls;
 
@@ -27,7 +27,6 @@ public class ShipController : MonoBehaviour
     float _pitchAmount, _rollAmount, _yawAmount = 0f;
 
     DamageHandler _damageHandler;
-    
 
     IMovementControls MovementInput => _movementControls;
     IWeaponControls WeaponInput => _weaponControls;
@@ -52,6 +51,11 @@ public class ShipController : MonoBehaviour
         if (_cockpitAnimationControls != null)
         {
             _cockpitAnimationControls.Init(MovementInput);
+        }
+
+        if (_shield)
+        {
+            _shield.Init(_shipData.ShieldStrength);
         }
     }
 
