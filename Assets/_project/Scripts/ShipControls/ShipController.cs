@@ -45,7 +45,7 @@ public class ShipController : MonoBehaviour
 
         foreach (Blaster blaster in _blasters)
         {
-            blaster.Init(WeaponInput, _shipData.BlasterCooldown, _shipData.BlasterLaunchForce, _shipData.BlasterProjectileDuration, _shipData.BlasterDamage);
+            blaster.Init(WeaponInput, _shipData.BlasterCooldown, _shipData.BlasterLaunchForce, _shipData.BlasterProjectileDuration, _shipData.BlasterDamage, _rigidBody);
         }
 
         if (_cockpitAnimationControls != null)
