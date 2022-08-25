@@ -23,12 +23,16 @@ public class HealthBar : MonoBehaviour
     {
         if (_damageHandler == null) return;
         _damageHandler.HealthChanged.AddListener(UpdateHealthBar);
+        _damageHandler.ObjectDestroyed.AddListener(DisableHealthBar);
     }
+
+
 
     void OnDisable()
     {
         if (_damageHandler == null) return;
         _damageHandler.HealthChanged.RemoveListener(UpdateHealthBar);
+        _damageHandler.ObjectDestroyed.RemoveListener(DisableHealthBar);
     }
 
     void LateUpdate()
@@ -51,4 +55,9 @@ public class HealthBar : MonoBehaviour
 
         _targetFillAmount = (float)_damageHandler.Health / (float)_damageHandler.MaxHealth;
     }
+    void DisableHealthBar()
+    {
+        gameObject.SetActive(false);
+    }
+    
 }
