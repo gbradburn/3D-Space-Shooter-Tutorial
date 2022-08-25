@@ -7,38 +7,47 @@ public class HealthBar : MonoBehaviour
     [SerializeField] float _updateRate = 1f;
     [SerializeField] DamageHandler _damageHandler;
 
+    CameraManager _cameraManager;
     Transform _transform;
-    Camera _camera;
+    Transform _activeCamera;
     float _targetFillAmount;
 
     void Awake()
     {
         _transform = transform;
-        _camera = Camera.main;
-        if (_damageHandler == null) return;
-        UpdateHealthBar();
+        _cameraManager = FindObjectOfType<CameraManager>();
     }
 
     void OnEnable()
     {
-        if (_damageHandler == null) return;
-        _damageHandler.HealthChanged.AddListener(UpdateHealthBar);
-        _damageHandler.ObjectDestroyed.AddListener(DisableHealthBar);
+        if (_damageHandler)
+        {
+            _damageHandler.HealthChanged.AddListener(UpdateHealthBar);
+            _damageHandler.ObjectDestroyed.AddListener(DisableHealthBar);
+            _targetFillAmount = 1;
+        }
+
+        _activeCamera = _cameraManager.ActiveCamera;
+        _cameraManager.ActiveCameraChanged.AddListener(OnCameraChanged);
     }
-
-
 
     void OnDisable()
     {
-        if (_damageHandler == null) return;
-        _damageHandler.HealthChanged.RemoveListener(UpdateHealthBar);
-        _damageHandler.ObjectDestroyed.RemoveListener(DisableHealthBar);
+        if (_damageHandler)
+        {
+            _damageHandler.HealthChanged.RemoveListener(UpdateHealthBar);
+            _damageHandler.ObjectDestroyed.RemoveListener(DisableHealthBar);
+        }
+        _cameraManager.ActiveCameraChanged.RemoveListener(OnCameraChanged);
     }
 
     void LateUpdate()
     {
-        _transform.LookAt(_camera.transform);
-        if (_damageHandler == null || _healthBarImage == null) return;
+        if (_activeCamera)
+        {
+            _transform.LookAt(_activeCamera);
+        }
+        if (!_damageHandler || _healthBarImage == null) return;
         if (Mathf.Approximately(_healthBarImage.fillAmount, _targetFillAmount)) return;
         _healthBarImage.fillAmount =
             Mathf.MoveTowards(_healthBarImage.fillAmount, _targetFillAmount, _updateRate * Time.deltaTime);
@@ -47,6 +56,7 @@ public class HealthBar : MonoBehaviour
     void UpdateHealthBar()
     {
         if (_damageHandler == null) return;
+        Debug.Log($"{gameObject.name} updating health to {_damageHandler.Health} / {_damageHandler.MaxHealth}");
         if (_damageHandler.Health == 0)
         {
             _targetFillAmount = 0;
@@ -59,5 +69,11 @@ public class HealthBar : MonoBehaviour
     {
         gameObject.SetActive(false);
     }
+
+    void OnCameraChanged()
+    {
+        _activeCamera = _cameraManager.ActiveCamera;
+    }
+
     
 }
