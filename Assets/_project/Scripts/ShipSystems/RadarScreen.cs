@@ -93,7 +93,6 @@ public class RadarScreen : MonoBehaviour
     void DrawTargetBlips()
     {
         ClearDisplay();
-        Vector3 scale;
 
         foreach (var target in _targetsInRange)
         {
@@ -102,31 +101,36 @@ public class RadarScreen : MonoBehaviour
             var blip = Instantiate(_blipPrefab, _radarTransform);
             blip.transform.localScale = _blipPrefab.transform.localScale;
             blip.transform.localPosition = _blipPosition;
+            DrawHeightLines(blip);
+        }
+
+        void DrawHeightLines(GameObject blip)
+        {
             if (Mathf.Approximately(0f, _pitch)) return;
             RadarBlip radarBlip = blip.GetComponent<RadarBlip>();
             radarBlip.LineAbove.SetActive(_pitch < 0f);
             radarBlip.LineBelow.SetActive(_pitch > 0f);
+            Vector3 scale;
             if (_pitch < 0f)
             {
                 scale = radarBlip.LineAbove.transform.localScale;
                 scale.y = Mathf.Clamp(Mathf.Abs(_pitch) / 90f, 0f, 1f);
                 radarBlip.LineAbove.transform.localScale = scale;
-                return;
             }
-
-            if (_pitch > 0f)
+            else if (_pitch > 0f)
             {
                 scale = radarBlip.LineBelow.transform.localScale;
                 scale.y = Mathf.Clamp(Mathf.Abs(_pitch) / 90f, 0f, 1f);
                 radarBlip.LineBelow.transform.localScale = scale;
             }
+
         }
     }
 
     void CalculateBlipPosition()
     {
         _angleToTarget = Mathf.Atan2(_targetPosition.x, _targetPosition.z) * Mathf.Rad2Deg;
-        _localDirection = Quaternion.Inverse(_player.rotation) * (_targetPosition - _player.position);
+        _localDirection = Quaternion.Inverse(_player.rotation) * _targetPosition;
         _pitch = Vector3.Angle(Vector3.down, _localDirection) - 90f;
         _playerAngle = _player.eulerAngles.y;
         _radarAngle = _angleToTarget - _playerAngle - 90f;
