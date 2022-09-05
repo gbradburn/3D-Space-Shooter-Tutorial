@@ -36,7 +36,7 @@ public class PIDController
     public float Update(float deltaTime, float currentValue, float targetValue)
     {
         if (!_enablePid) return targetValue;
-        if (deltaTime <= 0) throw new ArgumentOutOfRangeException(nameof(deltaTime));
+        if (deltaTime <= 0) return targetValue;
 
         float error = targetValue - currentValue;
 

@@ -56,7 +56,6 @@ public class HealthBar : MonoBehaviour
     void UpdateHealthBar()
     {
         if (_damageHandler == null) return;
-        Debug.Log($"{gameObject.name} updating health to {_damageHandler.Health} / {_damageHandler.MaxHealth}");
         if (_damageHandler.Health == 0)
         {
             _targetFillAmount = 0;
