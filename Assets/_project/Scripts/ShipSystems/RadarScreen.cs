@@ -31,8 +31,9 @@ public class RadarScreen : MonoBehaviour
     float _blipX, _blipY;
     float _pitch;
     Collider[] _targetColliders;
-    Transform _lockedOnTarget;
 
+    public Transform LockedOnTarget { get; private set; }
+    
     void Awake()
     {
         if (!_radarScreen) return;
@@ -40,7 +41,7 @@ public class RadarScreen : MonoBehaviour
         _radarTransform = _radarScreen.transform;
         _radarRenderer = _radarScreen.GetComponent<Renderer>();
         _transform = transform;
-        _lockedOnTarget = null;
+        LockedOnTarget = null;
     }
 
     void OnValidate()
@@ -70,7 +71,7 @@ public class RadarScreen : MonoBehaviour
     void LateUpdate()
     {
         DrawTargetBlips();
-        UIManager.Instance.UpdateTargetIndicators(_targetsInRange, _lockedOnTarget ? _lockedOnTarget.GetInstanceID() : -1);
+        UIManager.Instance.UpdateTargetIndicators(_targetsInRange, LockedOnTarget ? LockedOnTarget.GetInstanceID() : -1);
     }
 
     IEnumerator RefreshTargetList()
@@ -79,7 +80,7 @@ public class RadarScreen : MonoBehaviour
         while (true)
         {
             _targetsInRange.Clear();
-            _lockedOnTarget = null;
+            LockedOnTarget = null;
             float closest = _lockOnRange;
             var myPosition = _transform.position;
             size = Physics.OverlapSphereNonAlloc(_transform.position, _radarRange, _targetColliders, _layerMask);
@@ -108,7 +109,7 @@ public class RadarScreen : MonoBehaviour
         if (distance < closest && angle < _lockOnRadius)
         {
             closest = distance;
-            _lockedOnTarget = target;
+            LockedOnTarget = target;
         }
 
         return closest;

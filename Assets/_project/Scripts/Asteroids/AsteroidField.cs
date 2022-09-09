@@ -7,18 +7,19 @@ using Random = UnityEngine.Random;
 public class AsteroidField : MonoBehaviour
 {
     [SerializeField] [Range(100, 1000)] private int _asteroidCount = 500;
-    [SerializeField] [Range(100f, 500f)] private float _radius = 300f;
-    [SerializeField] [Range(1f, 5f)] private float _maxScale = 5f;
-    [SerializeField] private List<GameObject> _asteroidPrefabs;
+    [SerializeField] [Range(100f, 1000f)] private float _radius = 300f;
+    [SerializeField] [Range(1f, 10f)] private float _maxScale = 5f;
+    [SerializeField] List<GameObject> _asteroidPrefabs;
     
-    private Transform _transform;
+    Transform _transform;
+    public float Radius => _radius;
 
-    private void Awake()
+    void Awake()
     {
         _transform = transform;
     }
 
-    private void OnEnable()
+    void OnEnable()
     {
         SpawnAsteroids();
     }
