@@ -35,7 +35,11 @@ public class UIManager : MonoBehaviour
     {
         var key = target.GetInstanceID();
         var indicator = _targetIndicators.FirstOrDefault(i => i.Key == key);
-        if (indicator) _targetIndicators.Remove(indicator);
+        if (indicator)
+        {
+            _targetIndicators.Remove(indicator);
+            Destroy(indicator.gameObject);
+        }
     }
 
     public void UpdateTargetIndicators(List<Transform> targets, int lockedOnTarget)
