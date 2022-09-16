@@ -99,7 +99,6 @@ public class ShipController : MonoBehaviour
 
     void OnHealthChanged()
     {
-        Debug.Log($"{gameObject.name} health is {_damageHandler.Health}/{_damageHandler.MaxHealth}");
     }
 
 
