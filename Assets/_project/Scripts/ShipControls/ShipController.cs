@@ -5,10 +5,10 @@ public class ShipController : MonoBehaviour
 {
     [SerializeField] Shield _shield;
     [SerializeField]
-    MovementControlsBase _movementControls;
+    protected MovementControlsBase _movementControls;
 
     [SerializeField]
-    WeaponControlsBase _weaponControls;    
+    protected WeaponControlsBase _weaponControls;    
 
     [SerializeField]
     ShipDataSo _shipData;
@@ -19,6 +19,8 @@ public class ShipController : MonoBehaviour
     [SerializeField]
     List<Blaster> _blasters;
 
+    [SerializeField] protected List<MissileLauncher> _missileLaunchers;
+    
     [SerializeField]
     private AnimateCockpitControls _cockpitAnimationControls;
     
@@ -26,7 +28,7 @@ public class ShipController : MonoBehaviour
     [Range(-1f, 1f)]
     float _pitchAmount, _rollAmount, _yawAmount = 0f;
 
-    DamageHandler _damageHandler;
+    protected DamageHandler _damageHandler;
 
     IMovementControls MovementInput => _movementControls;
     IWeaponControls WeaponInput => _weaponControls;
@@ -48,6 +50,11 @@ public class ShipController : MonoBehaviour
             blaster.Init(WeaponInput, _shipData.BlasterCooldown, _shipData.BlasterLaunchForce, _shipData.BlasterProjectileDuration, _shipData.BlasterDamage, _rigidBody);
         }
 
+        foreach (MissileLauncher launcher in _missileLaunchers)
+        {
+            launcher.Init(WeaponInput);
+        }
+
         if (_cockpitAnimationControls != null)
         {
             _cockpitAnimationControls.Init(MovementInput);
@@ -59,7 +66,7 @@ public class ShipController : MonoBehaviour
         }
     }
 
-    void OnEnable()
+    public virtual void OnEnable()
     {
         if (_damageHandler == null) return;
         _damageHandler.Init(_shipData.MaxHealth);
@@ -67,7 +74,7 @@ public class ShipController : MonoBehaviour
         _damageHandler.ObjectDestroyed.AddListener(DestroyShip);
     }
 
-    void Update()
+    public virtual void Update()
     {
         _rollAmount = MovementInput.RollAmount;
         _yawAmount = MovementInput.YawAmount;
