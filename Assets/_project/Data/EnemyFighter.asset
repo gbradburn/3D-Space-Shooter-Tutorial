@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8b82177ff0cd76d439cc1969f6753b91, type: 3}
+  m_Name: EnemyFighter
+  m_EditorClassIdentifier: 
+  _thrustForce: 7000
+  _pitchForce: 1400
+  _rollForce: 1000
+  _yawForce: 1200
+  _shieldStrength: 1000
+  _shieldRegenAmount: 100
+  _maxHealth: 1000
+  _blasterDamage: 100
+  _blasterLaunchForce: 7500
+  _blasterCoolDown: 1
+  _blasterProjectileDuration: 3

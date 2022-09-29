@@ -1,17 +1,34 @@
+using System;
 using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
-    bool ShouldQuitGame => Input.GetKeyUp(KeyCode.Escape);
+    public static GameManager Instance;
     
-    // Start is called before the first frame update
+    bool ShouldQuitGame => Input.GetKeyUp(KeyCode.Escape);
+
+    void Awake()
+    {
+        if (Instance != null && Instance != this)
+        {
+            Destroy(gameObject);
+            return;
+        }
+
+        Instance = this;
+    }
+
     void Start()
     {
         Cursor.lockState = CursorLockMode.Confined;
         Cursor.visible = false;
     }
 
-    // Update is called once per frame
+    void OnEnable()
+    {
+        MusicManager.Instance.PlayPatrolMusic();
+    }
+
     void Update()
     {
         if (ShouldQuitGame)
@@ -31,6 +48,16 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    public void InCombat(bool inCombat)
+    {
+        if (inCombat)
+        {
+            MusicManager.Instance.PlayCombatMusic();
+            return;
+        }
+
+        MusicManager.Instance.PlayPatrolMusic();
+    }
     void QuitGame()
     {
 #if UNITY_EDITOR
