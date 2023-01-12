@@ -6,9 +6,14 @@ public class MusicManager : MonoBehaviour
 {
     public static MusicManager Instance;
 
-    [SerializeField] AudioMixerSnapshot _patrolSnapshot, _combatSnapshot;
-    [SerializeField] AudioClip[] _patrolMusic, _combatMusic;
-    [SerializeField] AudioSource _patrolAudioSource, _combatAudioSource;
+    [SerializeField] AudioMixerSnapshot _patrolSnapshot;
+    [SerializeField] AudioMixerSnapshot _combatSnapshot;
+    [SerializeField] AudioMixerSnapshot _gameOverSnapshot;
+    [SerializeField] AudioClip[] _patrolMusic;
+    [SerializeField] AudioClip[] _combatMusic;
+    [SerializeField] AudioSource _patrolAudioSource;
+    [SerializeField] AudioSource _combatAudioSource;
+    [SerializeField] AudioSource _gameOverAudioSource;
 
     int _patrolMusicIndex, _combatMusicIndex;
     
@@ -43,5 +48,7 @@ public class MusicManager : MonoBehaviour
 
     public void PlayGameOverMusic()
     {
+        _gameOverAudioSource.Play();
+        _gameOverSnapshot.TransitionTo(1f);
     }
 }
