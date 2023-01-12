@@ -8772,6 +8772,7 @@ GameObject:
   - component: {fileID: 8029512111458034979}
   - component: {fileID: 120291550687684435}
   - component: {fileID: 1936427476247241661}
+  - component: {fileID: 5363862948030593818}
   m_Layer: 9
   m_Name: EnemyShip
   m_TagString: Untagged
@@ -8919,6 +8920,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: df205ce67137e024281b1d98e92cf11c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &5363862948030593818
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7775465932746545343}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 747103fd6872f994fbed3ab3423e1f39, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _points: 1000
 --- !u!1 &7904983324665742927
 GameObject:
   m_ObjectHideFlags: 0

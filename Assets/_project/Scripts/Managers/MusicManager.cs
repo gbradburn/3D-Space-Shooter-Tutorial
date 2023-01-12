@@ -40,4 +40,8 @@ public class MusicManager : MonoBehaviour
         _patrolSnapshot.TransitionTo(1f);
         _patrolMusicIndex = (_patrolMusicIndex + 1) % _patrolMusic.Length;
     }
+
+    public void PlayGameOverMusic()
+    {
+    }
 }

@@ -11,9 +11,10 @@ GameObject:
   - component: {fileID: 423664123336512251}
   - component: {fileID: 6757259055050118829}
   - component: {fileID: 2142220730673836255}
-  - component: {fileID: 1090215104934847450}
   - component: {fileID: 6748566059744427990}
   - component: {fileID: 531348933794127924}
+  - component: {fileID: 1090215104934847450}
+  - component: {fileID: -1525415517954465150}
   m_Layer: 12
   m_Name: Rock13
   m_TagString: Untagged
@@ -86,20 +87,6 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!114 &1090215104934847450
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3197304097635422991}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0a1b87a4b57994445bdf46868439e5f9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _fracturedAsteroidPrefab: {fileID: 6477406429045864497, guid: b9398f0eba1548d429b4bed21a8b15e8, type: 3}
-  _explosionPrefab: {fileID: 8844277550991517175, guid: b0a4745119c2c7847b41fec5702ab773, type: 3}
 --- !u!54 &6748566059744427990
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -130,3 +117,30 @@ CapsuleCollider:
   m_Height: 2.5424416
   m_Direction: 1
   m_Center: {x: 0.061261, y: -0.75828326, z: -0.16311699}
+--- !u!114 &1090215104934847450
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3197304097635422991}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0a1b87a4b57994445bdf46868439e5f9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _fracturedAsteroidPrefab: {fileID: 6477406429045864497, guid: b9398f0eba1548d429b4bed21a8b15e8, type: 3}
+  _explosionPrefab: {fileID: 8844277550991517175, guid: b0a4745119c2c7847b41fec5702ab773, type: 3}
+--- !u!114 &-1525415517954465150
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3197304097635422991}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 747103fd6872f994fbed3ab3423e1f39, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _points: 20
