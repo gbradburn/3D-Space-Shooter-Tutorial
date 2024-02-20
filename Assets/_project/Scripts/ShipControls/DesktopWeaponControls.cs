@@ -1,9 +1,9 @@
 using System;
-using UnityEngine;
+using UnityEngine.InputSystem;
 
 [Serializable]
 public class DesktopWeaponControls : WeaponControlsBase
 {
-    public override bool PrimaryFired => Input.GetMouseButton(0);
-    public override bool SecondaryFired => Input.GetMouseButton(1);
+    public override bool PrimaryFired => Mouse.current.leftButton.isPressed;
+    public override bool SecondaryFired => Mouse.current.rightButton.isPressed;
 }
