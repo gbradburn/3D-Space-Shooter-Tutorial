@@ -18,6 +18,7 @@ public class RadarScreen : MonoBehaviour
     WaitForSeconds _waitForSeconds;
     List<Transform> _targetsInRange;
     float _radarWidth;
+    float _radarHeight;
     Transform _radarTransform;
     Renderer _radarRenderer;
     Vector3 _targetPosition = Vector3.zero;
@@ -58,6 +59,7 @@ public class RadarScreen : MonoBehaviour
         if (!_radarRenderer) return;
         var bounds = _radarRenderer.bounds;
         _radarWidth = bounds.size.x;
+        _radarHeight = bounds.size.y;
     }
 
     void OnEnable()
@@ -178,7 +180,7 @@ public class RadarScreen : MonoBehaviour
         _blipX = _normalizedDistance * Mathf.Cos(_angleRadians);
         _blipY = _normalizedDistance * Mathf.Sin(_angleRadians);
         _blipPosition.x = _blipX * (_radarWidth * 0.25f);
-        _blipPosition.y = _blipY * (_radarWidth * 0.25f) * -1f;
+        _blipPosition.y = _blipY * (_radarHeight * 0.25f) * -1f;
         if (_player.localEulerAngles.z is < 270f and > 90f)
         {
             _blipPosition.x *= -1f;
