@@ -47,16 +47,11 @@ public class RadarScreen : MonoBehaviour
         LockedOnTarget = null;
     }
 
-    void OnValidate()
-    {
-        _targetColliders = new Collider[_maxTargets];
-        if (!_radarScreen) return;
-        _waitForSeconds = new WaitForSeconds(_refreshDelay);
-    }
-
     void Start()
     {
         if (!_radarRenderer) return;
+        _targetColliders = new Collider[_maxTargets];
+        _waitForSeconds = new WaitForSeconds(_refreshDelay);        
         var bounds = _radarRenderer.bounds;
         _radarWidth = bounds.size.x;
         _radarHeight = bounds.size.y;
