@@ -1,15 +1,21 @@
+using System;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class TargetIndicator : MonoBehaviour
 {
     [SerializeField] Image _targetBox, _lockOnImage, _offScreenImage;
-    [SerializeField] float _offScreenMargin = 45f;
+    [SerializeField] GameObject _targetLeadIndicatorPrefab;
+    [SerializeField] float _offScreenMargin = 45f, _projectileSpeed = 800f;
 
     Transform _target;
     Canvas _mainCanvas;
     Camera _mainCamera;
     RectTransform _rectTransform, _canvasRect;
+    
+    Rigidbody _targetRigidbody;
+    Transform _player;
+    GameObject _targetLeadIndicator;
 
     Vector3 _screenCenter = Vector3.zero;
 
@@ -28,9 +34,27 @@ public class TargetIndicator : MonoBehaviour
     public int Key { get; private set; }
     public bool LockedOn { get; set; }
 
+    public void Init(Transform target, Canvas mainCanvas)
+    {
+        _target = target;
+        Key = _target.GetInstanceID();
+        _mainCanvas = mainCanvas;
+        _canvasRect = _mainCanvas.GetComponent<RectTransform>();
+        _player = GameObject.FindGameObjectWithTag("Player").transform;
+        _targetLeadIndicator = Instantiate(_targetLeadIndicatorPrefab, _mainCanvas.transform);
+        _targetRigidbody = _target.GetComponent<Rigidbody>();
+        _mainCamera = Camera.main;
+    }
+
     void Awake()
     {
         _rectTransform = GetComponent<RectTransform>();
+    }
+
+    void OnDestroy()
+    {
+        _targetLeadIndicator.SetActive(false);
+        GameObject.Destroy(_targetLeadIndicator);
     }
 
     void LateUpdate()
@@ -42,21 +66,74 @@ public class TargetIndicator : MonoBehaviour
         if (TargetIsVisible(targetViewportPos))
         {
             DisplayOnScreenReticle(targetViewportPos);
+            UpdateTargetLeadingIndicator();
             return;
         }
 
+        _targetLeadIndicator.SetActive(false);
         DisplayOffScreenReticle(targetViewportPos);
     }
 
-    public void Init(Transform target, Canvas mainCanvas)
+    void UpdateTargetLeadingIndicator()
     {
-        _target = target;
-        Key = _target.GetInstanceID();
-        _mainCanvas = mainCanvas;
-        _canvasRect = _mainCanvas.GetComponent<RectTransform>();
-        _mainCamera = Camera.main;
+        var predictedPosition = CalculatePredictedPosition();
+        DisplayTargetLeadIndicator(predictedPosition);
     }
 
+    Vector3 CalculatePredictedPosition()
+    {
+        var interceptPosition = _target.position;
+
+        // Relative position and velocity
+        var relativePosition = interceptPosition - _player.position;
+        var relativeVelocity = _targetRigidbody.velocity;
+
+        // Coefficients for the quadratic equation
+        var a = Vector3.Dot(relativeVelocity, relativeVelocity) - _projectileSpeed * _projectileSpeed;
+        var b = 2 * Vector3.Dot(relativeVelocity, relativePosition);
+        var c = Vector3.Dot(relativePosition, relativePosition);
+
+        // Check for near-zero 'a' to avoid numerical instability
+        if (Mathf.Abs(a) < Mathf.Epsilon)
+        {
+            return interceptPosition; // Return current position if 'a' is effectively zero
+        }
+
+        // Calculate the discriminant of the quadratic equation
+        var discriminant = b * b - 4 * a * c;
+
+        if (discriminant < 0)
+        {
+            return interceptPosition; // No real solution, return current position
+        }
+
+        // Calculate the two possible times to impact
+        var sqrtDiscriminant = Mathf.Sqrt(discriminant);
+        var time1 = (-b - sqrtDiscriminant) / (2 * a);
+        var time2 = (-b + sqrtDiscriminant) / (2 * a);
+
+        // We want the positive time to impact (the future)
+        var impactTime = Mathf.Max(time1, time2);
+        if (impactTime < Mathf.Epsilon)
+        {
+            return interceptPosition; // No valid future impact time, return current position
+        }
+
+        // Calculate the intercept position
+        interceptPosition += _targetRigidbody.velocity * impactTime;
+
+        return interceptPosition;    
+    }
+
+    void DisplayTargetLeadIndicator(Vector3 targetPosition)
+    {
+        var targetViewportPos = _mainCamera.WorldToViewportPoint(targetPosition);
+        _targetLeadIndicator.SetActive(TargetIsVisible(targetViewportPos));
+        if (!_targetLeadIndicator.activeSelf) return;
+        var position = _mainCamera.ViewportToScreenPoint(targetViewportPos);
+        position.z = 0;
+        _targetLeadIndicator.transform.position = position;        
+    }
 
     bool TargetIsVisible(Vector3 position)
     {

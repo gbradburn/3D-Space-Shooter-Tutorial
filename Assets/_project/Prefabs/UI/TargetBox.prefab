@@ -31,7 +31,6 @@ RectTransform:
   m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 3722086031223178207}
-  m_RootOrder: -1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -107,7 +106,6 @@ RectTransform:
   m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 3722086031223178207}
-  m_RootOrder: -1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -186,7 +184,6 @@ RectTransform:
   - {fileID: 3722086029870326848}
   - {fileID: 3722086030233285118}
   m_Father: {fileID: 0}
-  m_RootOrder: 15
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -246,4 +243,6 @@ MonoBehaviour:
   _targetBox: {fileID: 3722086031223178205}
   _lockOnImage: {fileID: 3722086029870326851}
   _offScreenImage: {fileID: 3722086030233285113}
+  _targetLeadIndicatorPrefab: {fileID: 552233674007077986, guid: a937648270cf206489c9d520e647db65, type: 3}
   _offScreenMargin: 45
+  _projectileSpeed: 200
