@@ -44,6 +44,7 @@ public class Projectile : MonoBehaviour
     void Update()
     {
         if (OutOfFuel) Destroy(gameObject);
+        Debug.Log($"{name} velocity={_rigidBody.velocity.magnitude}");
     }
 
     public void Init(int launchForce, int damage, float range, Vector3 velocity, Vector3 angularVelocity)

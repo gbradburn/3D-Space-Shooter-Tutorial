@@ -38,7 +38,6 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.44657898, g: 0.4964133, b: 0.5748178, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -2844,7 +2843,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1154880823}
   serializedVersion: 2
-  m_LocalRotation: {x: -0.043606564, y: -0.0010581062, z: 0.024234606, w: 0.9987543}
+  m_LocalRotation: {x: -0.043606527, y: -0.0010581062, z: 0.024234569, w: 0.9987543}
   m_LocalPosition: {x: -0.04699758, y: 0.96785957, z: 0.16799402}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -4234,7 +4233,7 @@ MonoBehaviour:
   m_BlockingObjects: 0
   m_BlockingMask:
     serializedVersion: 2
-    m_Bits: 4294967295
+    m_Bits: 8191
 --- !u!114 &2023281151
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4547,6 +4546,17 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 8240270196369508191, guid: a9868eff06a88d64aa81c26e441ab331, type: 3}
   m_PrefabInstance: {fileID: 8240270196792279208}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &2128414712 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8240270196369508190, guid: a9868eff06a88d64aa81c26e441ab331, type: 3}
+  m_PrefabInstance: {fileID: 8240270196792279208}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7afdf5c56d439ba4b95d48e5e198ffe5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!4 &874972324090283637
 Transform:
   m_ObjectHideFlags: 0
@@ -4987,6 +4997,17 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 342466453466749555, guid: 101e7d7edfd5fea45978600bc4703cec, type: 3}
   m_PrefabInstance: {fileID: 1017476984790501474}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1017476984790501477 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 5784530750012400819, guid: 101e7d7edfd5fea45978600bc4703cec, type: 3}
+  m_PrefabInstance: {fileID: 1017476984790501474}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 58cc7ac6bc574312a7d70339ca586ed4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &2446496092829557360
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -5078,11 +5099,11 @@ PrefabInstance:
     - target: {fileID: 8547355818315142656, guid: 5f13c0258510c894487626306b657519, type: 3}
       propertyPath: _weaponControls
       value: 
-      objectReference: {fileID: 283154578}
+      objectReference: {fileID: 1017476984790501477}
     - target: {fileID: 8547355818315142656, guid: 5f13c0258510c894487626306b657519, type: 3}
       propertyPath: _movementControls
       value: 
-      objectReference: {fileID: 1999681578}
+      objectReference: {fileID: 2128414712}
     - target: {fileID: 8547355818315142656, guid: 5f13c0258510c894487626306b657519, type: 3}
       propertyPath: _missileLaunchers.Array.size
       value: 2
