@@ -25,7 +25,7 @@ Material:
     serializedVersion: 3
     m_TexEnvs:
     - _BackTex:
-        m_Texture: {fileID: 2800000, guid: 7abd0ba876d3eec47a97c7aadc380210, type: 3}
+        m_Texture: {fileID: 2800000, guid: 961587af42e5e4945a6f7c6a53c17b75, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _BumpMap:
@@ -45,7 +45,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _DownTex:
-        m_Texture: {fileID: 2800000, guid: 3bd9a2ba233530b46b8e292ebf4c91de, type: 3}
+        m_Texture: {fileID: 2800000, guid: 778da93bf4fb2f844aebe85a82988262, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _EmissionMap:
@@ -53,11 +53,11 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _FrontTex:
-        m_Texture: {fileID: 2800000, guid: 2491af8887e100e46a81c63b489aebdc, type: 3}
+        m_Texture: {fileID: 2800000, guid: 44dc211268bc8294ab2d9d3dc52f4042, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _LeftTex:
-        m_Texture: {fileID: 2800000, guid: 4a641c129d021924b96b754f3ee37f14, type: 3}
+        m_Texture: {fileID: 2800000, guid: 95ce34682b177924fb72026d3a9d9700, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
@@ -77,11 +77,11 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _RightTex:
-        m_Texture: {fileID: 2800000, guid: 2292e8ca8d59bdd4a9db307994dd6ed0, type: 3}
+        m_Texture: {fileID: 2800000, guid: a1b9a55366807f6498eedb467df8f180, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _UpTex:
-        m_Texture: {fileID: 2800000, guid: fe22252f676c6a04086f8e0692f39878, type: 3}
+        m_Texture: {fileID: 2800000, guid: 67c01d6b5cc76b340a7eef4362e2f073, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Ints: []
@@ -109,3 +109,4 @@ Material:
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _Tint: {r: 0.5, g: 0.5, b: 0.5, a: 0.5}
   m_BuildTextureStacks: []
+  m_AllowLocking: 1

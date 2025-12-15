@@ -74,7 +74,7 @@ public class Missile : MonoBehaviour
             _rigidbody.MoveRotation(Quaternion.RotateTowards(_transform.rotation, rotation, _rotateSpeed * Time.fixedDeltaTime));
         }
 
-        _rigidbody.velocity = _transform.forward * _speed;
+        _rigidbody.linearVelocity = _transform.forward * _speed;
     }
 
     void OnCollisionEnter(Collision other)
