@@ -79,7 +79,7 @@ public class Blaster : MonoBehaviour
         _capacitor = Mathf.Max(_capacitor - _costPerShot, 0);
         Projectile projectile = Instantiate(fullCharge ? _projectilePrefab : _weakProjectilePrefab, _muzzle.position, transform.rotation);
         projectile.gameObject.SetActive(false);
-        projectile.Init(_launchForce, fullCharge ? _damage : (int)(_damage * 0.1f), _duration, _rigidBody.velocity, _rigidBody.angularVelocity);
+        projectile.Init(_launchForce, fullCharge ? _damage : (int)(_damage * 0.1f), _duration, _rigidBody.linearVelocity, _rigidBody.angularVelocity);
         projectile.gameObject.SetActive(true);
     }
 

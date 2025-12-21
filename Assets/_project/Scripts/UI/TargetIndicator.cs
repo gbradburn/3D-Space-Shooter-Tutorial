@@ -86,7 +86,7 @@ public class TargetIndicator : MonoBehaviour
 
         // Relative position and velocity
         var relativePosition = interceptPosition - _player.position;
-        var relativeVelocity = _targetRigidbody.velocity;
+        var relativeVelocity = _targetRigidbody.linearVelocity;
 
         // Coefficients for the quadratic equation
         var a = Vector3.Dot(relativeVelocity, relativeVelocity) - _projectileSpeed * _projectileSpeed;
@@ -120,7 +120,7 @@ public class TargetIndicator : MonoBehaviour
         }
 
         // Calculate the intercept position
-        interceptPosition += _targetRigidbody.velocity * impactTime;
+        interceptPosition += _targetRigidbody.linearVelocity * impactTime;
 
         return interceptPosition;    
     }
