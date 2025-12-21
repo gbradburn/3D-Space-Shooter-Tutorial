@@ -3,7 +3,7 @@ refreshSearchWindowsInPlayMode = false
 pickerAdvancedUI = false
 fetchPreview = true
 defaultFlags = 0
-keepOpen = false
+keepOpen = true
 queryFolder = "Assets"
 onBoardingDoNotAskAgain = true
 showPackageIndexes = false
@@ -11,39 +11,9 @@ showStatusBar = false
 scopes = {
 }
 providers = {
-	find = {
+	asset = {
 		active = true
 		priority = 25
-		defaultAction = null
-	}
-	adb = {
-		active = false
-		priority = 2500
-		defaultAction = null
-	}
-	store = {
-		active = true
-		priority = 100
-		defaultAction = null
-	}
-	packages = {
-		active = true
-		priority = 90
-		defaultAction = null
-	}
-	log = {
-		active = false
-		priority = 210
-		defaultAction = null
-	}
-	performance = {
-		active = false
-		priority = 100
-		defaultAction = null
-	}
-	profilermarkers = {
-		active = false
-		priority = 100
 		defaultAction = null
 	}
 	scene = {
@@ -51,14 +21,44 @@ providers = {
 		priority = 50
 		defaultAction = null
 	}
-	asset = {
-		active = true
-		priority = 25
+	adb = {
+		active = false
+		priority = 2500
 		defaultAction = null
 	}
 	presets_provider = {
 		active = false
 		priority = -10
+		defaultAction = null
+	}
+	find = {
+		active = true
+		priority = 25
+		defaultAction = null
+	}
+	packages = {
+		active = false
+		priority = 90
+		defaultAction = null
+	}
+	profilermarkers = {
+		active = false
+		priority = 100
+		defaultAction = null
+	}
+	performance = {
+		active = false
+		priority = 100
+		defaultAction = null
+	}
+	store = {
+		active = false
+		priority = 100
+		defaultAction = null
+	}
+	log = {
+		active = false
+		priority = 210
 		defaultAction = null
 	}
 }
@@ -75,7 +75,7 @@ indexOnEditorStartup = true
 logIndexingPerformanceReport = false
 expandedQueries = [
 ]
-queryBuilder = false
+queryBuilder = true
 ignoredProperties = "id;name;classname;imagecontentshash"
 helperWidgetCurrentArea = "all"
 disabledIndexers = ""

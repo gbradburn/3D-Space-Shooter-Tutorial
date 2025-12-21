@@ -245,4 +245,4 @@ MonoBehaviour:
   _offScreenImage: {fileID: 3722086030233285113}
   _targetLeadIndicatorPrefab: {fileID: 552233674007077986, guid: a937648270cf206489c9d520e647db65, type: 3}
   _offScreenMargin: 45
-  _projectileSpeed: 200
+  _projectileSpeed: 800

@@ -7,7 +7,7 @@
         "types": true,
         "properties": true,
         "extended": false,
-        "dependencies": true
+        "dependencies": false
     },
     "baseScore": 999
 }
