@@ -1,3 +1,4 @@
+using UnityEditor;
 using UnityEngine;
 
 public class Asteroid : MonoBehaviour, IDamageable
@@ -31,4 +32,5 @@ public class Asteroid : MonoBehaviour, IDamageable
         
         Destroy(gameObject);
     }
+    
 }
