@@ -11,7 +11,6 @@ GameObject:
   - component: {fileID: 8844277550984481847}
   - component: {fileID: 8844277550991517175}
   - component: {fileID: 8844277550991517173}
-  - component: {fileID: 8844277550991517171}
   - component: {fileID: 8844277550991517169}
   - component: {fileID: 8844277550991517183}
   - component: {fileID: 8844277550991517181}
@@ -32,13 +31,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8844277550984450071}
+  serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &8844277550991517175
 MonoBehaviour:
@@ -114,41 +113,6 @@ MonoBehaviour:
   startingRadius: 5
   minScale: 0.2004919
   maxScale: 0.5389314
---- !u!114 &8844277550991517171
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8844277550984450071}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e0a30e21f576d054695cb3804fce8a9d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  on: 1
-  detonatorControlled: 1
-  startSize: 1
-  size: 2
-  explodeDelayMin: 0
-  explodeDelayMax: 0
-  startDuration: 2
-  duration: 0.3
-  timeScale: 1
-  startDetail: 1
-  detail: 1
-  startColor: {r: 1, g: 1, b: 1, a: 1}
-  color: {r: 1, g: 1, b: 1, a: 1}
-  startLocalPosition: {x: 0, y: 0, z: 0}
-  localPosition: {x: 0, y: 0, z: 0}
-  startForce: {x: 0, y: 0, z: 0}
-  force: {x: 0, y: 0, z: 0}
-  startVelocity: {x: 0, y: 0, z: 0}
-  velocity: {x: 0, y: 0, z: 0}
-  detailThreshold: 0.88950825
-  zOffset: 0.97655946
-  distortion: 38.150185
-  heatwaveMaterial: {fileID: 0}
 --- !u!114 &8844277550991517169
 MonoBehaviour:
   m_ObjectHideFlags: 0

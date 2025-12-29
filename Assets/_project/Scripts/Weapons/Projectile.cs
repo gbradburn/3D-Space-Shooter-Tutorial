@@ -37,14 +37,14 @@ public class Projectile : MonoBehaviour
 
     private void OnDisable()
     {
-        _rigidBody.velocity = Vector3.zero;
+        _rigidBody.linearVelocity = Vector3.zero;
         _rigidBody.angularVelocity = Vector3.zero;
     }
 
     void Update()
     {
         if (OutOfFuel) Destroy(gameObject);
-        Debug.Log($"{name} velocity={_rigidBody.velocity.magnitude}");
+        Debug.Log($"{name} velocity={_rigidBody.linearVelocity.magnitude}");
     }
 
     public void Init(int launchForce, int damage, float range, Vector3 velocity, Vector3 angularVelocity)
@@ -52,7 +52,7 @@ public class Projectile : MonoBehaviour
         _launchForce = launchForce;
         _damage = damage;
         _range = range;
-        _rigidBody.velocity = velocity;
+        _rigidBody.linearVelocity = velocity;
         _rigidBody.angularVelocity = angularVelocity;
     }
     

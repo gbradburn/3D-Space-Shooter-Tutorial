@@ -1,9 +1,16 @@
 {
     "name": "Assets",
-    "roots": ["Assets"],
+    "type": "asset",
+    "roots": [
+        "Assets"
+    ],
     "includes": [],
-    "excludes": ["Assets/Temp/", "Assets/External/"],
+    "excludes": [
+        "Assets/Temp/",
+        "Assets/External/"
+    ],
     "options": {
+        "disabled": false,
         "types": true,
         "properties": true,
         "extended": false,

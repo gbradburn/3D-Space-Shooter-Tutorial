@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class ShipController : MonoBehaviour
 {
@@ -79,6 +80,12 @@ public class ShipController : MonoBehaviour
         _rollAmount = MovementInput.RollAmount;
         _yawAmount = MovementInput.YawAmount;
         _pitchAmount = MovementInput.PitchAmount;
+        
+        if (Keyboard.current.pKey.wasPressedThisFrame)
+        {
+            // pause game in editor
+            UnityEditor.EditorApplication.isPaused = !UnityEditor.EditorApplication.isPaused;
+        }
     }
 
     void FixedUpdate()

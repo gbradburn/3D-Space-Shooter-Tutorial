@@ -28,8 +28,9 @@ public class DetonatorHeatwave : DetonatorComponent {
 		//we don't want to do anything until we explode
 	}
 	
-	void Update () 
+	void Update ()
 	{
+		return;
 		if (_delayedExplosionStarted)
 		{
 			_explodeDelay = (_explodeDelay - Time.deltaTime);
@@ -61,6 +62,7 @@ public class DetonatorHeatwave : DetonatorComponent {
 	
 	override public void Explode()
 	{
+		return;
         //try to early out if we can't draw this (not sure if this also gets us out of Unity Indie)
         if (SystemInfo.supportsImageEffects)
         {
