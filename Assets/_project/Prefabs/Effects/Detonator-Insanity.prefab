@@ -34,8 +34,8 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
+  m_LocalScale: {x: 3, y: 3, z: 3}
+  m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -51,7 +51,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9b4007f1233a9b74fa9be42583fafba6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  size: 8
+  size: 10
   color: {r: 0.5432987, g: 0.72156864, b: 0.59792185, a: 0.3882353}
   explodeOnStart: 1
   duration: 5.3579783
@@ -59,7 +59,7 @@ MonoBehaviour:
   upwardsBias: 0
   destroyTime: 10.520339
   useWorldSpace: 1
-  direction: {x: 0, y: 0.24, z: 0}
+  direction: {x: 0, y: 0, z: 0}
   fireballAMaterial: {fileID: 0}
   fireballBMaterial: {fileID: 0}
   smokeAMaterial: {fileID: 0}

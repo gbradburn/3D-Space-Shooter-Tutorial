@@ -1586,7 +1586,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &646182646
 Transform:
   m_ObjectHideFlags: 0
@@ -2777,7 +2777,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1154880823}
   serializedVersion: 2
-  m_LocalRotation: {x: -0.043606527, y: -0.0010581062, z: 0.024234569, w: 0.9987543}
+  m_LocalRotation: {x: -0.04360655, y: -0.0010581062, z: 0.024234591, w: 0.9987543}
   m_LocalPosition: {x: -0.04699758, y: 0.96785957, z: 0.16799402}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -4125,6 +4125,7 @@ GameObject:
   - component: {fileID: 1911813867}
   - component: {fileID: 1911813866}
   - component: {fileID: 1911813870}
+  - component: {fileID: 1911813871}
   m_Layer: 0
   m_Name: Target
   m_TagString: Untagged
@@ -4219,9 +4220,9 @@ Transform:
   m_GameObject: {fileID: 1911813865}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 25, z: 100}
+  m_LocalPosition: {x: 0, y: 10, z: 20}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
+  m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -4239,6 +4240,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _radius: 2000
   _delay: 5
+--- !u!114 &1911813871
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1911813865}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 34f7594a4f0c1a8468c1ebb13eacf9df, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::DebugStuff
+  _explosionPrefab: {fileID: 6886602789820651179, guid: a08b2b1696d8599499c11d9ca22bea17, type: 3}
 --- !u!1 &1974785206
 GameObject:
   m_ObjectHideFlags: 0
@@ -5191,8 +5205,20 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 5168375673579747429, guid: 5f13c0258510c894487626306b657519, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 6198283682061882527, guid: 5f13c0258510c894487626306b657519, type: 3}
       propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6298238971212307931, guid: 5f13c0258510c894487626306b657519, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6298238971212307933, guid: 5f13c0258510c894487626306b657519, type: 3}
+      propertyPath: m_Enabled
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6298238971212307933, guid: 5f13c0258510c894487626306b657519, type: 3}
@@ -5216,6 +5242,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1743766219}
     - target: {fileID: 6298238971212307934, guid: 5f13c0258510c894487626306b657519, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6298238971212307934, guid: 5f13c0258510c894487626306b657519, type: 3}
       propertyPath: '_blasterBars.Array.data[0]'
       value: 
       objectReference: {fileID: 800247328}
@@ -5231,6 +5261,10 @@ PrefabInstance:
       propertyPath: '_coolDownBars.Array.data[1]'
       value: 
       objectReference: {fileID: 1709326589}
+    - target: {fileID: 6744891250446058251, guid: 5f13c0258510c894487626306b657519, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 8544566278820282279, guid: 5f13c0258510c894487626306b657519, type: 3}
       propertyPath: m_RootOrder
       value: 6
@@ -5276,6 +5310,10 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8547355818315142656, guid: 5f13c0258510c894487626306b657519, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8547355818315142656, guid: 5f13c0258510c894487626306b657519, type: 3}
       propertyPath: _weaponControls
       value: 
       objectReference: {fileID: 1017476984790501477}
@@ -5298,6 +5336,10 @@ PrefabInstance:
     - target: {fileID: 8547355818315142687, guid: 5f13c0258510c894487626306b657519, type: 3}
       propertyPath: m_Name
       value: Player Ship
+      objectReference: {fileID: 0}
+    - target: {fileID: 8547355818315142687, guid: 5f13c0258510c894487626306b657519, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

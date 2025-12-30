@@ -1,4 +1,4 @@
-using System;
+using UnityEditor;
 using UnityEngine;
 
 public class Asteroid : MonoBehaviour, IDamageable
@@ -7,6 +7,7 @@ public class Asteroid : MonoBehaviour, IDamageable
     [SerializeField] private GameObject _explosionPrefab;
 
     private Transform _transform;
+    private bool _isDestroyed;
 
     private void Awake()
     {
@@ -15,27 +16,28 @@ public class Asteroid : MonoBehaviour, IDamageable
 
     public void TakeDamage(int damage, Vector3 hitPosition)
     {
+        if (_isDestroyed) return;
+        _isDestroyed = true;
+        
         FractureAsteroid(hitPosition);
     }
 
     private void FractureAsteroid(Vector3 hitPosition)
     {
+        var asteroidPosition = _transform.position;
+        
         if (_fracturedAsteroidPrefab)
         {
-            Instantiate(_fracturedAsteroidPrefab, _transform.position, _transform.rotation);
+            Instantiate(_fracturedAsteroidPrefab, asteroidPosition, _transform.rotation);
         }
 
         if (_explosionPrefab)
         {
-            var explosion = Instantiate(_explosionPrefab, transform.position/*hitPosition*/, Quaternion.identity);
-            Debug.Log($"explosion instantiated at {explosion.transform.position}, asteroid position {transform.position}");
+            Instantiate(_explosionPrefab, asteroidPosition, Quaternion.identity);
         }
-        Destroy(gameObject);
-        Invoke(nameof(PauseGame), 0.5f);
-    }
-
-    void PauseGame()
-    {
-        UnityEditor.EditorApplication.isPaused = true;
+        
+        gameObject.name = "Destroyed Asteroid";
+        gameObject.SetActive(false);
+        Destroy(gameObject, 5f);
     }
 }

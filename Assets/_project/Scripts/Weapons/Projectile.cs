@@ -12,6 +12,7 @@ public class Projectile : MonoBehaviour
     float _duration;
     Rigidbody _rigidBody;
     AudioSource _audioSource;
+    bool _hasCollided;
     
     bool OutOfFuel
     {
@@ -31,6 +32,7 @@ public class Projectile : MonoBehaviour
 
     void OnEnable()
     {
+        _hasCollided = false;
         _rigidBody.AddForce(_launchForce * transform.forward);
         _duration = _range;
     }
@@ -44,7 +46,6 @@ public class Projectile : MonoBehaviour
     void Update()
     {
         if (OutOfFuel) Destroy(gameObject);
-        Debug.Log($"{name} velocity={_rigidBody.linearVelocity.magnitude}");
     }
 
     public void Init(int launchForce, int damage, float range, Vector3 velocity, Vector3 angularVelocity)
@@ -58,17 +59,21 @@ public class Projectile : MonoBehaviour
     
     void OnCollisionEnter(Collision collision)
     {
+        if (_hasCollided) return;
+        _hasCollided = true;
+        
         if (_impactSound) _audioSource.PlayOneShot(_impactSound);
-        IDamageable damageable = collision.collider.gameObject.GetComponent<IDamageable>();
-        if (damageable != null)
+        if (collision.collider.gameObject.TryGetComponent<IDamageable>(out var damageable))
         {
-            Vector3 hitPosition = collision.GetContact(0).point;
+            var hitPosition = collision.GetContact(0).point;
             damageable.TakeDamage(_damage, hitPosition);
         }
 
-        if (_hitEffect != null)
+        if (_hitEffect)
         {
-            Instantiate(_hitEffect, transform.position, Quaternion.identity);
+            var hitPosition = collision.GetContact(0).point;
+            var hitEffect = Instantiate(_hitEffect, Vector3.zero, Quaternion.identity);
+            hitEffect.transform.position = hitPosition;
         }
         Destroy(gameObject);
     }
