@@ -1240,4 +1240,4 @@ Ready to proceed to Phase 1: Multiplayer Setup
 
 ---
 
-**Next**: See [multiplayer-migration.md] for Phase 1 and beyond.
+**Next**: See **[multiplayer-migration.md](multiplayer-migration.md)** for Phase 1 and beyond.
