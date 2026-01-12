@@ -8,6 +8,15 @@
         "com.unity.nuget.newtonsoft-json": "3.2.1"
       }
     },
+    "com.midniteoilsoftware.core": {
+      "version": "https://github.com/Midnite-Oil-Software-L-L-C/unity_packages.git?path=/Core",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {
+        "com.unity.ugui": "2.0.0"
+      },
+      "hash": "08eabe7476eab17cb9e6d38712ec3636127b7fc5"
+    },
     "com.unity.2d.sprite": {
       "version": "1.0.0",
       "depth": 0,
