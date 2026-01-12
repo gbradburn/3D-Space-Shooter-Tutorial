@@ -15,12 +15,12 @@ public class SkyboxSetter : MonoBehaviour
 
     void OnEnable()
     {
-        ChangeSkybox(0);
+        ChangeSkybox(Random.Range(0, _skyboxMaterials.Count));
     }
 
     void ChangeSkybox(int skyBox)
     {
-        if (_skybox != null && skyBox >= 0 && skyBox <= _skyboxMaterials.Count)
+        if (_skybox && skyBox >= 0 && skyBox <= _skyboxMaterials.Count)
         {
             _skybox.material = _skyboxMaterials[skyBox];
         }

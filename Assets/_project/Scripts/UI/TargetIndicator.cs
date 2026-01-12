@@ -37,13 +37,30 @@ public class TargetIndicator : MonoBehaviour
     public void Init(Transform target, Canvas mainCanvas)
     {
         _target = target;
+        if (ValidateParameters()) return;
         Key = _target.GetInstanceID();
         _mainCanvas = mainCanvas;
         _canvasRect = _mainCanvas.GetComponent<RectTransform>();
-        _player = GameObject.FindGameObjectWithTag("Player").transform;
         _targetLeadIndicator = Instantiate(_targetLeadIndicatorPrefab, _mainCanvas.transform);
         _targetRigidbody = _target.GetComponent<Rigidbody>();
         _mainCamera = Camera.main;
+    }
+
+    bool ValidateParameters()
+    {
+        if (!_target)
+        {
+            Debug.LogWarning("TargetIndicator: Init called with null target.");
+            return true;
+        }
+        _player = GameObject.FindGameObjectWithTag("Player").transform;
+        if (!_player)
+        {
+            Debug.LogWarning("TargetIndicator: Could not find Player object in scene.");
+            return true;
+        }
+
+        return false;
     }
 
     void Awake()
@@ -59,6 +76,8 @@ public class TargetIndicator : MonoBehaviour
 
     void LateUpdate()
     {
+        if (!_target) return;
+        
         // Get normalized position of target
         Vector3 targetViewportPos = _mainCamera.WorldToViewportPoint(_target.position);
         

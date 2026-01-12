@@ -49,14 +49,15 @@ public class EnemyShipController : ShipController
     
     #endregion
 
-    bool InAttackRange => Vector3.Distance(PlayerShip.transform.position, _transform.position) <= _attackRange;
+    bool InAttackRange => PlayerShip && (Vector3.Distance(PlayerShip.transform.position, _transform.position) <= _attackRange);
     bool ShouldRetreat => _damageHandler.Health < (_damageHandler.MaxHealth * 0.33f);
-    bool ReachedPatrolTarget => Vector3.Distance(_target.position, _transform.position) < 0.15f;
+    bool ReachedPatrolTarget => _target && Vector3.Distance(_target.position, _transform.position) < 0.15f;
 
     bool ShouldReposition => Physics.SphereCast(_transform.position, 3f, _transform.forward,
         out var hit, 100f, _playerMask);
 
-    public float VectorDifference => (PlayerShip.transform.forward - _transform.forward).magnitude;
+    public float VectorDifference => PlayerShip ? (PlayerShip.transform.forward - _transform.forward).magnitude:
+        0f;
 
     public override void OnEnable()
     {
