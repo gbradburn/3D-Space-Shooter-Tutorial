@@ -1,6 +1,7 @@
-using System;
 using UnityEngine;
 using UnityEngine.UI;
+using MidniteOilSoftware.Core;
+using MidniteOilSoftware.SpaceShooter.Events;
 
 public class TargetIndicator : MonoBehaviour
 {
@@ -34,16 +35,57 @@ public class TargetIndicator : MonoBehaviour
     public int Key { get; private set; }
     public bool LockedOn { get; set; }
 
+    void OnEnable()
+    {
+        EventBus.Instance.Subscribe<PlayerSpawnedEvent>(OnPlayerSpawned);
+        EventBus.Instance.Subscribe<PlayerDestroyedEvent>(OnPlayerDestroyed);
+    }
+
+    void OnDisable()
+    {
+        if (EventBus.Instance != null)
+        {
+            EventBus.Instance.Unsubscribe<PlayerSpawnedEvent>(OnPlayerSpawned);
+            EventBus.Instance.Unsubscribe<PlayerDestroyedEvent>(OnPlayerDestroyed);
+        }
+    }
+
+    void OnPlayerSpawned(PlayerSpawnedEvent e)
+    {
+        if (e.IsLocalPlayer)
+        {
+            _player = e.Player.transform;
+        }
+    }
+
+    void OnPlayerDestroyed(PlayerDestroyedEvent e)
+    {
+        if (_player && _player.gameObject == e.Player)
+        {
+            _player = null;
+        }
+    }
+
     public void Init(Transform target, Canvas mainCanvas)
     {
         _target = target;
         if (ValidateParameters()) return;
+        
         Key = _target.GetInstanceID();
         _mainCanvas = mainCanvas;
         _canvasRect = _mainCanvas.GetComponent<RectTransform>();
         _targetLeadIndicator = Instantiate(_targetLeadIndicatorPrefab, _mainCanvas.transform);
         _targetRigidbody = _target.GetComponent<Rigidbody>();
         _mainCamera = Camera.main;
+        
+        if (!_player && PlayerManager.Instance)
+        {
+            var localPlayer = PlayerManager.Instance.GetLocalPlayer();
+            if (localPlayer)
+            {
+                _player = localPlayer.transform;
+            }
+        }
     }
 
     bool ValidateParameters()
@@ -53,13 +95,6 @@ public class TargetIndicator : MonoBehaviour
             Debug.LogWarning("TargetIndicator: Init called with null target.");
             return true;
         }
-        _player = GameObject.FindGameObjectWithTag("Player").transform;
-        if (!_player)
-        {
-            Debug.LogWarning("TargetIndicator: Could not find Player object in scene.");
-            return true;
-        }
-
         return false;
     }
 
@@ -101,6 +136,9 @@ public class TargetIndicator : MonoBehaviour
 
     Vector3 CalculatePredictedPosition()
     {
+        // todo revisit this to see if we need to clear anything if the player doesn't exist
+        if (!_player || !_targetRigidbody) return _target.position;
+        
         var interceptPosition = _target.position;
 
         // Relative position and velocity

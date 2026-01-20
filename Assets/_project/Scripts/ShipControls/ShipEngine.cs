@@ -9,7 +9,8 @@ public class ShipEngine : MonoBehaviour
     float _thrustForce;
     float _thrustAmount;
 
-    bool ThrustersEnabled => !Mathf.Approximately(0f, _shipMovementControls.ThrustAmount);
+    bool ThrustersEnabled => _shipMovementControls != null && 
+                             !Mathf.Approximately(0f, _shipMovementControls.ThrustAmount);
 
     void Update()
     {
@@ -24,6 +25,11 @@ public class ShipEngine : MonoBehaviour
 
     public void Init(IMovementControls movementControls, Rigidbody rb, float thrustForce)
     {
+        if (movementControls == null)
+        {
+            Debug.LogError($"movementControls is null in ShipEngine.Init()");
+            return;
+        }
         _shipMovementControls = movementControls;
         _rigidbody = rb;
         _thrustForce = thrustForce;
@@ -31,6 +37,7 @@ public class ShipEngine : MonoBehaviour
 
     void ActivateThrusters()
     {
+        if (!_thruster) return;
         _thruster.SetActive(ThrustersEnabled);
         if (!ThrustersEnabled) return;
         _thrustAmount = _thrustForce * _shipMovementControls.ThrustAmount;

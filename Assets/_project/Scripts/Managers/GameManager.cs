@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class GameManager : MonoBehaviour
 {
@@ -9,11 +10,11 @@ public class GameManager : MonoBehaviour
 
     public GameState GameState { get; private set; }
     
-    bool ShouldQuitGame => Input.GetKeyUp(KeyCode.Escape);
+    bool ShouldQuitGame => Keyboard.current != null && Keyboard.current.escapeKey.wasReleasedThisFrame;
     
     void Awake()
     {
-        if (Instance != null && Instance != this)
+        if (Instance && Instance != this)
         {
             Destroy(gameObject);
             return;
@@ -48,12 +49,12 @@ public class GameManager : MonoBehaviour
             QuitGame();
         }
 
-        if (Input.GetKeyDown(KeyCode.F1))
+        if (Keyboard.current != null && Keyboard.current.f1Key.wasPressedThisFrame)
         {
             Time.timeScale = 0f;
         }
 
-        if (Input.GetKeyDown(KeyCode.C))
+        if (Keyboard.current != null && Keyboard.current.cKey.wasPressedThisFrame)
         {
             Cursor.visible = !Cursor.visible;
             Cursor.lockState = Cursor.visible ? CursorLockMode.None : CursorLockMode.Confined;

@@ -10326,10 +10326,10 @@ GameObject:
   - component: {fileID: 6298238971212307931}
   - component: {fileID: 7027802150318522455}
   - component: {fileID: 1611415413915460271}
-  - component: {fileID: 6298238971212307933}
-  - component: {fileID: 6298238971212307934}
   - component: {fileID: 4870103702784041834}
   - component: {fileID: 1644019512158871351}
+  - component: {fileID: 1292858158178274707}
+  - component: {fileID: 6994504763358645729}
   m_Layer: 6
   m_Name: PlayerShip
   m_TagString: Player
@@ -10415,8 +10415,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _shield: {fileID: 4871359915702170674}
-  _movementControls: {fileID: 0}
-  _weaponControls: {fileID: 0}
+  _movementControls: {fileID: 1292858158178274707}
+  _weaponControls: {fileID: 6994504763358645729}
   _shipData: {fileID: 11400000, guid: 727060f8e1b7c0c4db82dfe5e59a7c8f, type: 2}
   _engines:
   - {fileID: 6744891250446058251}
@@ -15254,49 +15254,6 @@ ParticleSystemRenderer:
   m_MeshWeighting1: 1
   m_MeshWeighting2: 1
   m_MeshWeighting3: 1
---- !u!114 &6298238971212307933
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8547355818315142687}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 02c42d2a5a1a52342ba2007b123b25f7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _missileLaunchers:
-  - {fileID: 2064281250}
-  - {fileID: 188750061}
-  _missileAmmo:
-  - {fileID: 0}
-  - {fileID: 0}
-  _missileDisplayPrefab: {fileID: 837571425990534787, guid: 04bd95dbceb644745989bda3384a8fbd, type: 3}
-  _reloadedDisplay: {fileID: 0}
-  _reloadingBar: {fileID: 0}
-  _reloadsRemaining: {fileID: 0}
---- !u!114 &6298238971212307934
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8547355818315142687}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fd7b57af24aac144191f20fb255079b2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _blasters:
-  - {fileID: 6744932488965380030}
-  - {fileID: 6672138948487756158}
-  _blasterBars:
-  - {fileID: 0}
-  - {fileID: 0}
-  _coolDownBars:
-  - {fileID: 0}
-  - {fileID: 0}
 --- !u!114 &4870103702784041834
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -15340,6 +15297,31 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DamageHandler
   _explosionPrefab: {fileID: 8844277550984450071, guid: b0a4745119c2c7847b41fec5702ab773, type: 3}
+--- !u!114 &1292858158178274707
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8547355818315142687}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7afdf5c56d439ba4b95d48e5e198ffe5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::DesktopMovementControls
+  _deadZoneRadius: 0.1
+--- !u!114 &6994504763358645729
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8547355818315142687}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 58cc7ac6bc574312a7d70339ca586ed4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::DesktopWeaponControls
 --- !u!1 &8818087792477491389
 GameObject:
   m_ObjectHideFlags: 0
@@ -15818,21 +15800,9 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 6201770816444897195}
     m_Modifications:
-    - target: {fileID: 402712787474676780, guid: 5cd432181d6a2714aa18c072a1b0a294, type: 3}
-      propertyPath: m_Name
-      value: CockpitVirtualCamera
-      objectReference: {fileID: 0}
-    - target: {fileID: 402712787474676782, guid: 5cd432181d6a2714aa18c072a1b0a294, type: 3}
-      propertyPath: m_Lens.m_SensorSize.x
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 402712788929413555, guid: 5cd432181d6a2714aa18c072a1b0a294, type: 3}
       propertyPath: m_Name
       value: CockpitCamera
-      objectReference: {fileID: 0}
-    - target: {fileID: 402712788929413556, guid: 5cd432181d6a2714aa18c072a1b0a294, type: 3}
-      propertyPath: m_RootOrder
-      value: -1
       objectReference: {fileID: 0}
     - target: {fileID: 402712788929413556, guid: 5cd432181d6a2714aa18c072a1b0a294, type: 3}
       propertyPath: m_LocalPosition.x
@@ -15840,11 +15810,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 402712788929413556, guid: 5cd432181d6a2714aa18c072a1b0a294, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.19
+      value: 0.61
       objectReference: {fileID: 0}
     - target: {fileID: 402712788929413556, guid: 5cd432181d6a2714aa18c072a1b0a294, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -1.88
+      value: 0.33
       objectReference: {fileID: 0}
     - target: {fileID: 402712788929413556, guid: 5cd432181d6a2714aa18c072a1b0a294, type: 3}
       propertyPath: m_LocalRotation.w

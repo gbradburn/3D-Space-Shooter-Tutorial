@@ -1,6 +1,7 @@
-using System;
 using UnityEngine;
 using UnityEngine.Events;
+using MidniteOilSoftware.Core;
+using MidniteOilSoftware.SpaceShooter.Events;
 using Random = UnityEngine.Random;
 
 public class EnemyShipController : ShipController
@@ -22,7 +23,7 @@ public class EnemyShipController : ShipController
     EnemyShipState _state = EnemyShipState.None;
     Transform _transform;
 
-    GameObject PlayerShip => GameObject.FindGameObjectWithTag("Player");
+    GameObject _playerShip;
     Transform _target;
 
     public UnityEvent<int> ShipDestroyed = new UnityEvent<int>();
@@ -36,7 +37,7 @@ public class EnemyShipController : ShipController
     {
         get
         {
-            string distance = String.Empty;
+            var distance = string.Empty;
             if (_target)
             {
                 distance = $"{Vector3.Distance(_target.position, _transform.position):F2}";
@@ -49,28 +50,70 @@ public class EnemyShipController : ShipController
     
     #endregion
 
-    bool InAttackRange => PlayerShip && (Vector3.Distance(PlayerShip.transform.position, _transform.position) <= _attackRange);
+    bool InAttackRange => _playerShip && (Vector3.Distance(_playerShip.transform.position, _transform.position) <= _attackRange);
     bool ShouldRetreat => _damageHandler.Health < (_damageHandler.MaxHealth * 0.33f);
     bool ReachedPatrolTarget => _target && Vector3.Distance(_target.position, _transform.position) < 0.15f;
 
     bool ShouldReposition => Physics.SphereCast(_transform.position, 3f, _transform.forward,
         out var hit, 100f, _playerMask);
 
-    public float VectorDifference => PlayerShip ? (PlayerShip.transform.forward - _transform.forward).magnitude:
-        0f;
+    public float VectorDifference => _playerShip ? (_playerShip.transform.forward - _transform.forward).magnitude : 0f;
 
     public override void OnEnable()
     {
         _transform = transform;
         _aiShipMovementControls = (AIShipMovementControls)_movementControls;
         _aiShipWeaponControls = (AIShipWeaponControls)_weaponControls;
+        
+        EventBus.Instance.Subscribe<PlayerSpawnedEvent>(OnPlayerSpawned);
+        EventBus.Instance.Subscribe<PlayerDestroyedEvent>(OnPlayerDestroyed);
+        
+        if (PlayerManager.Instance)
+        {
+            _playerShip = PlayerManager.Instance.GetLocalPlayer();
+        }
+        
         SetState(EnemyShipState.Patrol);
         base.OnEnable();
     }
 
     void OnDisable()
     {
+        if (EventBus.Instance)
+        {
+            EventBus.Instance.Unsubscribe<PlayerSpawnedEvent>(OnPlayerSpawned);
+            EventBus.Instance.Unsubscribe<PlayerDestroyedEvent>(OnPlayerDestroyed);
+        }
+
         ShipDestroyed.Invoke(GetInstanceID());
+    }
+
+    void OnPlayerSpawned(PlayerSpawnedEvent e)
+    {
+        if (e.IsLocalPlayer)
+        {
+            _playerShip = e.Player;
+            
+            if (_state == EnemyShipState.Attack)
+            {
+                _target = _playerShip.transform;
+                _aiShipMovementControls.SetTarget(_target);
+                SetWeaponsTarget(_target, _attackRange, _targetMask);
+            }
+        }
+    }
+
+    void OnPlayerDestroyed(PlayerDestroyedEvent e)
+    {
+        if (_playerShip == e.Player)
+        {
+            _playerShip = null;
+            
+            if (_state == EnemyShipState.Attack || _state == EnemyShipState.Reposition)
+            {
+                SetState(EnemyShipState.Patrol);
+            }
+        }
     }
 
     public override void Update()
@@ -139,12 +182,18 @@ public class EnemyShipController : ShipController
                 }
                 break;
             case EnemyShipState.Attack:
+                if (!_playerShip)
+                {
+                    SetState(EnemyShipState.Patrol);
+                    return;
+                }
+                
                 if (_target)
                 {
                     Destroy(_target.gameObject);
                 }
 
-                _target = PlayerShip.transform;
+                _target = _playerShip.transform;
                 _aiShipMovementControls.SetTarget(_target);
                 SetWeaponsTarget(_target, _attackRange, _targetMask);
                 break;
@@ -161,7 +210,9 @@ public class EnemyShipController : ShipController
 
     Transform GetRetreatTarget()
     {
-        var direction = PlayerShip.transform.position - _transform.position;
+        if (!_playerShip) return new GameObject("Retreat target").transform;
+        
+        var direction = _playerShip.transform.position - _transform.position;
         var target = new GameObject("Retreat target").transform;
         target.position = direction * -5000f;
         return target;

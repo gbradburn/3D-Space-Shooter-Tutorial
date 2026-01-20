@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Cinemachine;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.InputSystem;
 
 public class CameraManager : MonoBehaviour
 {
@@ -24,9 +25,17 @@ public class CameraManager : MonoBehaviour
     {
         get
         {
-            for (int i = 0; i < _virtualCameras.Count; ++i)
+            if (Keyboard.current == null) return VirtualCameras.NoSelection;
+
+            for (var i = 0; i < _virtualCameras.Count; ++i)
             {
-                if (Input.GetKeyDown(KeyCode.Alpha1 + i)) return (VirtualCameras)i;
+                var keyNumber = i + 1;
+                
+                var numpadKey = Keyboard.current.FindKeyOnCurrentKeyboardLayout($"numpad{keyNumber}");
+                if (numpadKey != null && numpadKey.wasPressedThisFrame) return (VirtualCameras)i;
+                
+                var numberKey = Keyboard.current.FindKeyOnCurrentKeyboardLayout($"{keyNumber}");
+                if (numberKey != null && numberKey.wasPressedThisFrame) return (VirtualCameras)i;
             }
 
             return VirtualCameras.NoSelection;
@@ -59,8 +68,10 @@ public class CameraManager : MonoBehaviour
         VirtualCameras camIndex = VirtualCameras.CockpitCamera;
         foreach (var cam in _virtualCameras)
         {
+            if (!cam) continue; 
             if (camIndex++ == selectedCamera)
             {
+                if (!cam.gameObject) continue;
                 cam.gameObject.SetActive(true);
                 ActiveCamera = cam.transform;
                 ActiveCameraChanged.Invoke();

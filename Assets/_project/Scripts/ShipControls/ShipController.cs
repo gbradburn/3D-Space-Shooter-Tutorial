@@ -1,6 +1,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using MidniteOilSoftware.Core;
+using MidniteOilSoftware.SpaceShooter.Events;
 
 public class ShipController : MonoBehaviour
 {
@@ -30,6 +32,7 @@ public class ShipController : MonoBehaviour
     float _pitchAmount, _rollAmount, _yawAmount = 0f;
 
     protected DamageHandler _damageHandler;
+    bool _isLocalPlayer;
 
     IMovementControls MovementInput => _movementControls;
     IWeaponControls WeaponInput => _weaponControls;
@@ -38,25 +41,41 @@ public class ShipController : MonoBehaviour
     {
         _rigidBody = GetComponent<Rigidbody>();
         _damageHandler = GetComponent<DamageHandler>();
+
+        if (!_movementControls)
+        {
+            _movementControls = GetComponent<MovementControlsBase>();
+        }
+
+        if (!_weaponControls)
+        {
+            _weaponControls = GetComponent<WeaponControlsBase>();
+        }
     }
     void Start()
     {
-        foreach (ShipEngine engine in _engines)
+        InitializeWeaponSystems();
+        RaiseWeaponSystemsInitializedEvent();
+    }
+
+    void InitializeWeaponSystems()
+    {
+        foreach (var engine in _engines)
         {
-            engine.Init(MovementInput, _rigidBody, _shipData.ThrustForce / _engines.Count);
+            if (engine) engine.Init(MovementInput, _rigidBody, _shipData.ThrustForce / _engines.Count);
         }
 
-        foreach (Blaster blaster in _blasters)
+        foreach (var blaster in _blasters)
         {
-            blaster.Init(WeaponInput, _shipData.BlasterCooldown, _shipData.BlasterLaunchForce, _shipData.BlasterProjectileDuration, _shipData.BlasterDamage, _rigidBody);
+            if (blaster) blaster.Init(WeaponInput, _shipData.BlasterCooldown, _shipData.BlasterLaunchForce, _shipData.BlasterProjectileDuration, _shipData.BlasterDamage, _rigidBody);
         }
 
-        foreach (MissileLauncher launcher in _missileLaunchers)
+        foreach (var launcher in _missileLaunchers)
         {
-            launcher.Init(WeaponInput);
+            if (launcher) launcher.Init(WeaponInput);
         }
 
-        if (_cockpitAnimationControls != null)
+        if (_cockpitAnimationControls)
         {
             _cockpitAnimationControls.Init(MovementInput);
         }
@@ -65,6 +84,15 @@ public class ShipController : MonoBehaviour
         {
             _shield.Init(_shipData.ShieldStrength);
         }
+    }
+
+    void RaiseWeaponSystemsInitializedEvent()
+    {
+        EventBus.Instance.Raise(new WeaponSystemsInitializedEvent(
+            _blasters.ToArray(),
+            _missileLaunchers.ToArray(),
+            _isLocalPlayer
+        ));
     }
 
     public virtual void OnEnable()
@@ -77,15 +105,23 @@ public class ShipController : MonoBehaviour
 
     public virtual void Update()
     {
+        if (MovementInput == null) return;
+
         _rollAmount = MovementInput.RollAmount;
         _yawAmount = MovementInput.YawAmount;
         _pitchAmount = MovementInput.PitchAmount;
         
         if (Keyboard.current.pKey.wasPressedThisFrame)
         {
-            // pause game in editor
+#if UNITY_EDITOR
             UnityEditor.EditorApplication.isPaused = !UnityEditor.EditorApplication.isPaused;
+#endif
         }
+    }
+
+    public void SetIsLocalPlayer(bool isLocalPlayer)
+    {
+        _isLocalPlayer = isLocalPlayer;
     }
 
     void FixedUpdate()
