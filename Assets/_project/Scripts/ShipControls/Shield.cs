@@ -21,6 +21,7 @@ public class Shield : MonoBehaviour
 
     public void Init(int shieldStrength)
     {
+        gameObject.SetActive(true);
         _damageHandler.Init(shieldStrength);
     }
 
@@ -44,7 +45,7 @@ public class Shield : MonoBehaviour
     private void DestroyShields()
     {
         StopAllCoroutines();
-        Destroy(gameObject);
+        gameObject.SetActive(false);
     }
 
     IEnumerator FlashAndFadeShields()

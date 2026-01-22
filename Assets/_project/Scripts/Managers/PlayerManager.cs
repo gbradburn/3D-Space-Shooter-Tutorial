@@ -14,9 +14,14 @@ public class PlayerManager : SingletonMonoBehaviour<PlayerManager>
     [SerializeField] float _spawnProtectionDuration = 3f;
     [SerializeField] bool _autoSpawnLocalPlayer = true;
     
+    [Header("Respawn Configuration")]
+    [SerializeField] float _respawnDelay = 3f;
+    [SerializeField] bool _enableAutoRespawn = true;
+    
     readonly List<GameObject> _activePlayers = new();
     readonly Dictionary<GameObject, int> _playerIndexMap = new();
     readonly Dictionary<GameObject, bool> _playerLocalMap = new();
+    readonly Dictionary<GameObject, CountdownTimer> _respawnTimers = new();
     
     public int ActivePlayerCount => _activePlayers.Count;
     public List<GameObject> ActivePlayers => new(_activePlayers);
@@ -37,7 +42,21 @@ public class PlayerManager : SingletonMonoBehaviour<PlayerManager>
             Initialize();
         }
     }
-    
+
+    protected override void OnDestroy()
+    {
+        Debug.Log($"PlayerManager: OnDestroy called, cleaning up timers.", this);
+        base.OnDestroy();
+        if (TimerManager.Instance != null)
+        {
+            foreach(var timerPair in _respawnTimers)
+            {
+                TimerManager.Instance.ReleaseTimer<CountdownTimer>(timerPair.Value);
+            }
+        }
+        _respawnTimers.Clear();
+    }
+
     void Initialize()
     {
         if (_hasInitialized) return;
@@ -81,6 +100,7 @@ public class PlayerManager : SingletonMonoBehaviour<PlayerManager>
         
         var player = Instantiate(_playerShipPrefab, spawnPoint.Position, spawnPoint.Rotation);
         player.name = $"Player_{playerIndex}";
+        DontDestroyOnLoad(player);
         
         spawnPoint.SetOccupied(true);
         
@@ -133,14 +153,14 @@ public class PlayerManager : SingletonMonoBehaviour<PlayerManager>
         if (isLocalPlayer)
         {
             var cameraManager = FindFirstObjectByType<CameraManager>();
-            if (cameraManager != null)
+            if (cameraManager)
             {
                 SetCameraFollowTarget(player.transform);
             }
         }
         
         var damageHandler = player.GetComponent<DamageHandler>();
-        if (damageHandler != null)
+        if (damageHandler)
         {
             damageHandler.ObjectDestroyed.AddListener(() => OnPlayerDestroyed(player));
         }
@@ -176,16 +196,83 @@ public class PlayerManager : SingletonMonoBehaviour<PlayerManager>
         
         EventBus.Instance.Raise(new PlayerDestroyedEvent(player, playerIndex));
         
+        if (_enableDebugLog) 
+            Debug.Log($"PlayerManager: Player {playerIndex} destroyed. Remaining: {_activePlayers.Count}", this);
+
+        if (_enableAutoRespawn)
+        {
+            StartRespawnTimer(player, playerIndex, wasLocal);
+            return;
+        }
+        
         _activePlayers.Remove(player);
         _playerIndexMap.Remove(player);
         _playerLocalMap.Remove(player);
-        
         FreeSpawnPointNearPosition(player.transform.position);
-        
-        if (_enableDebugLog) 
-            Debug.Log($"PlayerManager: Player {playerIndex} destroyed. Remaining: {_activePlayers.Count}", this);
     }
-    
+
+    void StartRespawnTimer(GameObject player, int playerIndex, bool isLocal)
+    {
+        if (_enableDebugLog)
+        {
+            Debug.Log($"PlayerManager: Starting respawn timer for player {playerIndex} ({_respawnDelay} seconds)", this);
+        }
+        
+        var timer = TimerManager.Instance.CreateTimer<CountdownTimer>(_respawnDelay);
+        _respawnTimers[player] = timer as CountdownTimer;
+
+        timer.OnTimerStop = () => OnRespawnTimerComplete(player, playerIndex, isLocal);
+        timer.Start();
+    }
+
+    void OnRespawnTimerComplete(GameObject player, int playerIndex, bool isLocal)
+    {
+        if (!player) return;
+        if (_respawnTimers.ContainsKey(player))
+        {
+            TimerManager.Instance.ReleaseTimer<CountdownTimer>(_respawnTimers[player]);
+            _respawnTimers.Remove(player);
+        }
+
+        RespawnPlayer(player, playerIndex, isLocal);
+    }
+
+    void RespawnPlayer(GameObject player, int playerIndex, bool isLocal)
+    {
+        if (!player || !player.transform)
+        {
+            if (_enableDebugLog)
+            {
+                Debug.LogError($"RespawnPlayer: Player object is null or destroyed, cannot respawn player {playerIndex}", this);
+            }
+            return;
+        }
+        FreeSpawnPointNearPosition(player.transform.position);
+        var spawnPoint = GetAvailableSpawnPoint(playerIndex);
+        if (!spawnPoint)
+        {
+            Debug.LogError("PlayerManager: No available spawn points for respawn!", this);
+            return;
+        }
+        
+        player.transform.SetPositionAndRotation(spawnPoint.Position, spawnPoint.Rotation);
+        spawnPoint.SetOccupied(true);
+        var rb = player.GetComponent<Rigidbody>();
+        if (rb)
+        {
+            rb.linearVelocity = Vector3.zero;
+            rb.angularVelocity = Vector3.zero;
+        }
+        
+        player.SetActive(true);
+        EventBus.Instance.Raise(new PlayerSpawnedEvent(player, playerIndex, isLocal));
+
+        if (_enableDebugLog)
+        {
+            Debug.Log($"PlayerManager: Respawned player {playerIndex} at spawn point", this);
+        }
+    }
+
     void FreeSpawnPointNearPosition(Vector3 position)
     {
         foreach (var spawnPoint in _spawnPoints)

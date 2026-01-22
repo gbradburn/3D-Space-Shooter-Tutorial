@@ -101,6 +101,18 @@ public class ShipController : MonoBehaviour
         _damageHandler.Init(_shipData.MaxHealth);
         _damageHandler.HealthChanged.AddListener(OnHealthChanged);
         _damageHandler.ObjectDestroyed.AddListener(DestroyShip);
+        
+        if (_shield)
+        {
+            _shield.Init(_shipData.ShieldStrength);
+        }
+    }
+
+    public virtual void OnDisable()
+    {
+        if (_damageHandler == null) return;
+        _damageHandler.HealthChanged.RemoveListener(OnHealthChanged);
+        _damageHandler.ObjectDestroyed.RemoveListener(DestroyShip);
     }
 
     public virtual void Update()

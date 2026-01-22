@@ -6,6 +6,7 @@ using Random = UnityEngine.Random;
 
 public class AsteroidField : MonoBehaviour
 {
+    [SerializeField] Transform _asteroidContainer;
     [SerializeField] [Range(100, 1000)] private int _asteroidCount = 500;
     [SerializeField] [Range(100f, 1000f)] private float _radius = 300f;
     [SerializeField] [Range(1f, 10f)] private float _maxScale = 5f;
@@ -17,6 +18,10 @@ public class AsteroidField : MonoBehaviour
     void Awake()
     {
         _transform = transform;
+        if (!_asteroidContainer)
+        {
+            _asteroidContainer = _transform.parent;
+        }
     }
 
     void OnEnable()
@@ -30,6 +35,10 @@ public class AsteroidField : MonoBehaviour
         {
             GameObject asteroid = Instantiate(_asteroidPrefabs[Random.Range(0, _asteroidPrefabs.Count)],
                 _transform.position, Quaternion.identity);
+            if (_asteroidContainer)
+            {
+                asteroid.transform.SetParent(_asteroidContainer);
+            }
             float scale = Random.Range(0.5f, _maxScale);
             asteroid.transform.localScale = new Vector3(scale, scale, scale);
             asteroid.transform.position += Random.insideUnitSphere * _radius;

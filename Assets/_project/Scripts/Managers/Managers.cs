@@ -6,7 +6,7 @@ public class Managers : MonoBehaviour
 
     void Awake()
     {
-        if (_instance != null && _instance != this)
+        if (_instance && _instance != this)
         {
             Destroy(this.gameObject);
         }

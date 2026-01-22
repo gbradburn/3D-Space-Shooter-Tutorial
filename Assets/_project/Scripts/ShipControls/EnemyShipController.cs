@@ -188,7 +188,7 @@ public class EnemyShipController : ShipController
                     return;
                 }
                 
-                if (_target)
+                if (_target && IsTemporaryTarget(_target.gameObject))
                 {
                     Destroy(_target.gameObject);
                 }
@@ -244,5 +244,11 @@ public class EnemyShipController : ShipController
         }
 
         _aiShipWeaponControls.SetTarget(_target, attackRange, targetMask);
+    }
+
+    bool IsTemporaryTarget(GameObject target)
+    {
+        var targetName = target.name;
+        return targetName is "Patrol Target" or "Reposition Target" or "Retreat target";
     }
 }

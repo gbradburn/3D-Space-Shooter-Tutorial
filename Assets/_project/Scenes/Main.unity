@@ -3341,6 +3341,8 @@ MonoBehaviour:
   - {fileID: 1663366491}
   _spawnProtectionDuration: 3
   _autoSpawnLocalPlayer: 1
+  _respawnDelay: 3
+  _enableAutoRespawn: 1
 --- !u!1 &1088753776
 GameObject:
   m_ObjectHideFlags: 0
@@ -3409,8 +3411,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1154880823}
   serializedVersion: 2
-  m_LocalRotation: {x: -0.014666174, y: -2.5340385e-10, z: -3.716865e-12, w: 0.9998925}
-  m_LocalPosition: {x: 0, y: -27.5, z: -620}
+  m_LocalRotation: {x: -0.022487583, y: -0.3643304, z: 0.017250765, w: 0.9308384}
+  m_LocalPosition: {x: 13.476662, y: 2.497058, z: -14.77817}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

@@ -8,6 +8,7 @@ public class AddPointsWhenDestroyed : MonoBehaviour
 
     void OnDestroy()
     {
+        Debug.Log($"{name} destroyed, adding {_points} points.", this);
         AddScore();
     }
 

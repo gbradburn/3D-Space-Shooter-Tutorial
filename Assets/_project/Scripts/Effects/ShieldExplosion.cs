@@ -19,6 +19,7 @@ public class ShieldExplosion : MonoBehaviour
         }
         else
         {
+            Debug.Log($"Destroying ShieldExplosion on {name}", this);
             Destroy(gameObject);
         }
 

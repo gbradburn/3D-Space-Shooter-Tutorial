@@ -10330,6 +10330,7 @@ GameObject:
   - component: {fileID: 1644019512158871351}
   - component: {fileID: 1292858158178274707}
   - component: {fileID: 6994504763358645729}
+  - component: {fileID: 6703685119436950642}
   m_Layer: 6
   m_Name: PlayerShip
   m_TagString: Player
@@ -15322,6 +15323,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 58cc7ac6bc574312a7d70339ca586ed4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DesktopWeaponControls
+--- !u!114 &6703685119436950642
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8547355818315142687}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 89dcc9f274d72174dbffa8a853d6ea85, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::DestructionWatcher
+  _breakOnDisable: 0
+  _breakOnDestroy: 0
 --- !u!1 &8818087792477491389
 GameObject:
   m_ObjectHideFlags: 0

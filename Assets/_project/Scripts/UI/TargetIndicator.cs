@@ -116,7 +116,7 @@ public class TargetIndicator : MonoBehaviour
         // Get normalized position of target
         Vector3 targetViewportPos = _mainCamera.WorldToViewportPoint(_target.position);
         
-        // Display target reticle on target
+        // Display target reticule on target
         if (TargetIsVisible(targetViewportPos))
         {
             DisplayOnScreenReticle(targetViewportPos);
