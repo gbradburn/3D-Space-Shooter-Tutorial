@@ -9,6 +9,7 @@ public class DamageHandler : MonoBehaviour, IDamageable
     UnityEvent _objectDestroyedEvent;
     public int MaxHealth { get; private set; }
     public int Health { get; private set; }
+    public GameObject LastExplosion { get; private set; }
 
     public UnityEvent HealthChanged => _healthChangedEvent ??= new UnityEvent();
     public UnityEvent ObjectDestroyed => _objectDestroyedEvent ??= new UnityEvent();
@@ -38,7 +39,7 @@ public class DamageHandler : MonoBehaviour, IDamageable
         
         if (_explosionPrefab)
         {
-            Instantiate(_explosionPrefab, transform.position, Quaternion.identity);
+            LastExplosion = Instantiate(_explosionPrefab, transform.position, Quaternion.identity);
         }
         
         ObjectDestroyed.Invoke();

@@ -193,8 +193,12 @@ public class PlayerManager : SingletonMonoBehaviour<PlayerManager>
         
         var playerIndex = _playerIndexMap.ContainsKey(player) ? _playerIndexMap[player] : -1;
         var wasLocal = _playerLocalMap.ContainsKey(player) && _playerLocalMap[player];
+        var deathPosition = player.transform.position;
         
-        EventBus.Instance.Raise(new PlayerDestroyedEvent(player, playerIndex));
+        var damageHandler = player.GetComponent<DamageHandler>();
+        var explosion = damageHandler ? damageHandler.LastExplosion : null;
+        
+        EventBus.Instance.Raise(new PlayerDestroyedEvent(player, playerIndex, deathPosition, explosion));
         
         if (_enableDebugLog) 
             Debug.Log($"PlayerManager: Player {playerIndex} destroyed. Remaining: {_activePlayers.Count}", this);

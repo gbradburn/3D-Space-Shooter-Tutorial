@@ -20,11 +20,15 @@ namespace MidniteOilSoftware.SpaceShooter.Events
     {
         public GameObject Player { get; }
         public int PlayerIndex { get; }
+        public Vector3 DeathPosition { get; }
+        public GameObject Explosion { get; }
         
-        public PlayerDestroyedEvent(GameObject player, int playerIndex)
+        public PlayerDestroyedEvent(GameObject player, int playerIndex, Vector3 deathPosition, GameObject explosion = null)
         {
             Player = player;
             PlayerIndex = playerIndex;
+            DeathPosition = deathPosition;
+            Explosion = explosion;
         }
     }
 }
