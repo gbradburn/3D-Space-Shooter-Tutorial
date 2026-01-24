@@ -1,7 +1,7 @@
 using UnityEngine;
 
 [RequireComponent(typeof(AudioSource))]
-public class Projectile : MonoBehaviour
+public class Projectile : MonoBehaviour, IPoolable
 {
     [SerializeField] Detonator _hitEffect;
     [SerializeField] AudioClip _impactSound;
@@ -13,6 +13,8 @@ public class Projectile : MonoBehaviour
     Rigidbody _rigidBody;
     AudioSource _audioSource;
     bool _hasCollided;
+
+    IPoolStrategy<Projectile> _poolStrategy;
     
     bool OutOfFuel
     {
@@ -45,7 +47,10 @@ public class Projectile : MonoBehaviour
 
     void Update()
     {
-        if (OutOfFuel) Destroy(gameObject);
+        if (OutOfFuel)
+        {
+            ReturnToPool();
+        }
     }
 
     public void Init(int launchForce, int damage, float range, Vector3 velocity, Vector3 angularVelocity)
@@ -55,6 +60,11 @@ public class Projectile : MonoBehaviour
         _range = range;
         _rigidBody.linearVelocity = velocity;
         _rigidBody.angularVelocity = angularVelocity;
+    }
+    
+    public void SetPoolStrategy(IPoolStrategy<Projectile> poolStrategy)
+    {
+        _poolStrategy = poolStrategy;
     }
     
     void OnCollisionEnter(Collision collision)
@@ -75,6 +85,33 @@ public class Projectile : MonoBehaviour
             var hitEffect = Instantiate(_hitEffect, Vector3.zero, Quaternion.identity);
             hitEffect.transform.position = hitPosition;
         }
-        Destroy(gameObject);
+
+        ReturnToPool();
     }
+
+    void ReturnToPool()
+    {
+        if (_poolStrategy != null && PoolManager.Instance)
+        {
+            PoolManager.Instance.Release(this, _poolStrategy);
+        }
+        else
+        {
+            Debug.LogWarning("No pool strategy assigned to projectile. Using Destroy fallback.");
+            Destroy(gameObject);
+        }
+    }
+
+    #region IPoolable implementation
+    public void OnSpawnedFromPool()
+    {
+        _hasCollided = false;
+    }
+
+    public void OnReturnedToPool()
+    {
+        gameObject.SetActive(false);
+    }
+    
+    #endregion IPoolable implementation
 }

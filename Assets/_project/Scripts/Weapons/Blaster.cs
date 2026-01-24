@@ -7,6 +7,7 @@ public class Blaster : MonoBehaviour
     [SerializeField] Projectile _projectilePrefab, _weakProjectilePrefab;
     [SerializeField] AudioClip _fireSound;
     [SerializeField] Transform _muzzle;
+    [SerializeField] int _initialPoolSize = 50, _maxPoolSize = 100;
 
     public float CapacitorChargePercentage => _capacitor / _maxCapacitor;
     public float CoolDownPercent => Mathf.Clamp(_coolDown / _coolDownTime, 0f, 1f);
@@ -18,8 +19,10 @@ public class Blaster : MonoBehaviour
     IWeaponControls _weaponInput;
     float _coolDown;
     Rigidbody _rigidBody;
-
     AudioSource _audioSource;
+    
+    IPoolStrategy<Projectile> _projectileStrategy;
+    IPoolStrategy<Projectile> _weakProjectileStrategy;
     
     bool CanFire
     {
@@ -33,8 +36,24 @@ public class Blaster : MonoBehaviour
     void Awake()
     {
         _audioSource = SoundManager.Configure3DAudioSource(GetComponent<AudioSource>());
+        InitializePoolStrategies();
     }
 
+    void InitializePoolStrategies()
+    {
+        if (!PoolManager.Instance)
+        {
+            Debug.LogWarning("PoolManager not found. Blaster will use Instantiate fallback");
+            return;
+        }
+        
+        var poolRoot = PoolManager.Instance.GetPoolRoot();
+        _projectileStrategy = new ProjectilePoolStrategy(
+            _projectilePrefab.gameObject, 
+            poolRoot,
+            _initialPoolSize,
+            _maxPoolSize);
+    }
 
     void Update()
     {
@@ -77,10 +96,28 @@ public class Blaster : MonoBehaviour
         _coolDown = _coolDownTime;
         bool fullCharge = _capacitor >= _costPerShot;
         _capacitor = Mathf.Max(_capacitor - _costPerShot, 0);
-        Projectile projectile = Instantiate(fullCharge ? _projectilePrefab : _weakProjectilePrefab, _muzzle.position, transform.rotation);
+        
+        Projectile projectile = GetProjectileFromPool(fullCharge);
+
+        if (!projectile)
+        {
+            Debug.LogWarning("Failed to get projectile from pool. Using Instantiate fallback.");
+            projectile = Instantiate(fullCharge ? _projectilePrefab : _weakProjectilePrefab);
+        }
+        else
+        {
+            projectile.transform.SetPositionAndRotation(_muzzle.position, transform.rotation);
+        }
+        
         projectile.gameObject.SetActive(false);
         projectile.Init(_launchForce, fullCharge ? _damage : (int)(_damage * 0.1f), _duration, _rigidBody.linearVelocity, _rigidBody.angularVelocity);
         projectile.gameObject.SetActive(true);
     }
 
+    Projectile GetProjectileFromPool(bool fullCharge)
+    {
+        if (!PoolManager.Instance) return null;
+        var strategy = fullCharge ? _projectileStrategy : _weakProjectileStrategy;
+        return PoolManager.Instance.Get(strategy);
+    }
 }
