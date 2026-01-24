@@ -8,6 +8,7 @@ public class MissileLauncher : MonoBehaviour
     [SerializeField] int _missiles = 4, _reloads = 2;
     [SerializeField] float _coolDown = 2f, _reloadTime = 60f;
     [SerializeField] AudioClip _launchSound;
+    [SerializeField] int _initialPoolSize = 10, _maxPoolSize = 20;
     
     public int MissileCapacity => _missiles;
     public int Missiles => _missilesRemaining;
@@ -23,6 +24,8 @@ public class MissileLauncher : MonoBehaviour
     float _fireDelay, _reloadDelay;
     AudioSource _audioSource;
     IWeaponControls _weaponInput;
+    
+    IPoolStrategy<Missile> _missileStrategy;
 
     bool CanFire
     {
@@ -51,6 +54,23 @@ public class MissileLauncher : MonoBehaviour
         _transform = transform;
         _radarScreen = FindObjectOfType<RadarScreen>();
         _audioSource = SoundManager.Configure3DAudioSource(GetComponent<AudioSource>());
+        InitializePoolStrategy();
+    }
+
+    void InitializePoolStrategy()
+    {
+        if (!PoolManager.Instance)
+        {
+            Debug.LogWarning("PoolManager not found. MissileLauncher will use Instantiate fallback");
+            return;
+        }
+        
+        var poolRoot = PoolManager.Instance.GetPoolRoot();
+        _missileStrategy = new MissilePoolStrategy(
+            _missilePrefab, 
+            poolRoot,
+            _initialPoolSize,
+            _maxPoolSize);
     }
 
     void OnEnable()
@@ -76,7 +96,19 @@ public class MissileLauncher : MonoBehaviour
     void FireMissile()
     {
         if (_launchSound) _audioSource.PlayOneShot(_launchSound);
-        var missile = Instantiate(_missilePrefab, _transform.position, _transform.rotation).GetComponent<Missile>();
+        
+        Missile missile = GetMissileFromPool();
+
+        if (!missile)
+        {
+            Debug.LogWarning("Failed to get missile from pool. Using Instantiate fallback.");
+            missile = Instantiate(_missilePrefab, _transform.position, _transform.rotation).GetComponent<Missile>();
+        }
+        else
+        {
+            missile.transform.SetPositionAndRotation(_transform.position, _transform.rotation);
+        }
+        
         if (_radarScreen)
         {
             missile.Init(_target ? _target : _radarScreen.LockedOnTarget);
@@ -86,6 +118,12 @@ public class MissileLauncher : MonoBehaviour
         _missilesRemaining--;
         _fireDelay = _coolDown;
         MissileFired.Invoke();
+    }
+
+    Missile GetMissileFromPool()
+    {
+        if (!PoolManager.Instance) return null;
+        return PoolManager.Instance.Get(_missileStrategy);
     }
 
     void ReloadMissiles()

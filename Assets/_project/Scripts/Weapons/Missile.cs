@@ -1,7 +1,7 @@
 using UnityEngine;
 
 [RequireComponent(typeof(AudioSource))]
-public class Missile : MonoBehaviour
+public class Missile : MonoBehaviour, IPoolable
 {
     [SerializeField] float _speed = 150f, _rotateSpeed = 150f, _range = 10f, _armingTime = 0.5f;
     [SerializeField] int _damage = 1000;
@@ -13,6 +13,9 @@ public class Missile : MonoBehaviour
     float _duration, _armDelay;
     Collider _collider;
     AudioSource _audioSource;
+    bool _hasCollided;
+
+    IPoolStrategy<Missile> _poolStrategy;
 
     bool OutOfFuel
     {
@@ -44,12 +47,24 @@ public class Missile : MonoBehaviour
     {
         _target = target;
     }
+    
+    public void SetPoolStrategy(IPoolStrategy<Missile> poolStrategy)
+    {
+        _poolStrategy = poolStrategy;
+    }
 
     void OnEnable()
     {
+        _hasCollided = false;
         _duration = _range;
         _armDelay = _armingTime;
         _collider.enabled = false;
+    }
+
+    void OnDisable()
+    {
+        _rigidbody.linearVelocity = Vector3.zero;
+        _rigidbody.angularVelocity = Vector3.zero;
     }
 
     void Update()
@@ -79,6 +94,9 @@ public class Missile : MonoBehaviour
 
     void OnCollisionEnter(Collision other)
     {
+        if (_hasCollided) return;
+        _hasCollided = true;
+        
         if (_impactSound) _audioSource.PlayOneShot(_impactSound);
         if (other.collider.TryGetComponent<IDamageable>(out var damageable))
         {
@@ -93,6 +111,33 @@ public class Missile : MonoBehaviour
         {
             Instantiate(_explosionPrefab, _transform.position, Quaternion.identity);
         }
-        Destroy(gameObject);
+        ReturnToPool();
     }
+
+    void ReturnToPool()
+    {
+        if (_poolStrategy != null && PoolManager.Instance)
+        {
+            PoolManager.Instance.Release(this, _poolStrategy);
+        }
+        else
+        {
+            Debug.LogWarning("No pool strategy assigned to missile. Using Destroy fallback.");
+            Destroy(gameObject);
+        }
+    }
+
+    #region IPoolable implementation
+    public void OnSpawnedFromPool()
+    {
+        _hasCollided = false;
+    }
+
+    public void OnReturnedToPool()
+    {
+        _target = null;
+        gameObject.SetActive(false);
+    }
+    
+    #endregion IPoolable implementation
 }
