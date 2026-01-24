@@ -33,7 +33,7 @@ public class Asteroid : MonoBehaviour, IDamageable
 
         if (_explosionPrefab)
         {
-            Instantiate(_explosionPrefab, asteroidPosition, Quaternion.identity);
+            EffectManager.PlayEffect(_explosionPrefab, asteroidPosition, Quaternion.identity);
         }
         
         gameObject.name = "Destroyed Asteroid";

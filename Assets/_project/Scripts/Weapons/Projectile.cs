@@ -82,8 +82,7 @@ public class Projectile : MonoBehaviour, IPoolable
         if (_hitEffect)
         {
             var hitPosition = collision.GetContact(0).point;
-            var hitEffect = Instantiate(_hitEffect, Vector3.zero, Quaternion.identity);
-            hitEffect.transform.position = hitPosition;
+            var hitEffect = EffectManager.PlayEffect(_hitEffect.gameObject, hitPosition, Quaternion.identity);
         }
 
         ReturnToPool();

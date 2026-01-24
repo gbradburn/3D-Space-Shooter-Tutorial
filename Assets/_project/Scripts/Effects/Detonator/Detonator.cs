@@ -39,11 +39,14 @@ using System.Collections;
 */
 
 [AddComponentMenu("Detonator/Detonator")]
-public class Detonator : MonoBehaviour {
+public class Detonator : MonoBehaviour, IEffect, IPoolable {
 
 	private static float _baseSize = 30f;
 	private static Color _baseColor = new Color(1f, .423f, 0f, .5f);
 	private static float _baseDuration = 3f;
+	
+	IPoolStrategy<Detonator> _poolStrategy;
+	bool _isPooled;
 	
 	/*
 		_baseSize reflects the size that DetonatorComponents at size 1 match. Yes, this is really big (30m)
@@ -209,7 +212,14 @@ public class Detonator : MonoBehaviour {
 		{
 			if (_lastExplosionTime + destroyTime <= Time.time)
 			{
-				Destroy(gameObject);
+				if (_isPooled && _poolStrategy != null && PoolManager.Instance)
+				{
+					PoolManager.Instance.Release(this, _poolStrategy);
+				}
+				else
+				{
+					Destroy(gameObject);
+				}
 			}
 		}
 	}
@@ -438,4 +448,32 @@ public class Detonator : MonoBehaviour {
             return null;
         }
 	}
+
+	#region IEffect implementation
+	public float Duration => duration + destroyTime;
+	
+	public void Play(Vector3 position, Quaternion rotation)
+	{
+		transform.SetPositionAndRotation(position, rotation);
+		Explode();
+	}
+	
+	public void SetPoolStrategy(IPoolStrategy<Detonator> poolStrategy)
+	{
+		_poolStrategy = poolStrategy;
+		_isPooled = true;
+	}
+	#endregion IEffect implementation
+
+	#region IPoolable implementation
+	public void OnSpawnedFromPool()
+	{
+		_lastExplosionTime = 1000f;
+	}
+
+	public void OnReturnedToPool()
+	{
+		gameObject.SetActive(false);
+	}
+	#endregion IPoolable implementation
 }

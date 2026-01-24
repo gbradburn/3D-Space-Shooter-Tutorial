@@ -39,7 +39,7 @@ public class DamageHandler : MonoBehaviour, IDamageable
         
         if (_explosionPrefab)
         {
-            LastExplosion = Instantiate(_explosionPrefab, transform.position, Quaternion.identity);
+            LastExplosion = EffectManager.PlayEffect(_explosionPrefab, transform.position, Quaternion.identity);
         }
         
         ObjectDestroyed.Invoke();

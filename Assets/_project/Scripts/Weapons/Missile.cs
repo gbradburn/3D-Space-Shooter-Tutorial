@@ -109,7 +109,7 @@ public class Missile : MonoBehaviour, IPoolable
     {
         if (_explosionPrefab)
         {
-            Instantiate(_explosionPrefab, _transform.position, Quaternion.identity);
+            EffectManager.PlayEffect(_explosionPrefab, _transform.position, Quaternion.identity);
         }
         ReturnToPool();
     }
