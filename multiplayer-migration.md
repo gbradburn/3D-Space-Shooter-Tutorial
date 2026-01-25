@@ -1,6 +1,12 @@
 # Multiplayer Migration Guide for 3D Space Shooter
 
-This document outlines the strategy and implementation steps to convert the 3D Space Shooter Tutorial into a multiplayer game using Unity Gaming Services (UGS), Netcode for GameObjects (NGO), Lobby & Relay, supported by the Midnite Oil Software multiplayer boilerplate package.
+This document outlines the strategy and implementation steps to convert the 3D Space Shooter Tutorial into a multiplayer game using **Dedicated Server Architecture** with Unity Gaming Services (UGS) Multiplay and Netcode for GameObjects (NGO).
+
+**Vision**: Persistent world, one server, players join anytime  
+**Budget**: Start small (~$50/month)  
+**Architecture**: Dedicated server (authoritative, cheat-proof, scalable)
+
+> **📋 Architecture Analysis**: See [ecs-and-multiplayer-architecture-analysis](ecs-and-multiplayer-architecture-analysis.md) for full justification and comparison of hosting options.
 
 ---
 
@@ -10,11 +16,11 @@ This document outlines the strategy and implementation steps to convert the 3D S
 2. [Current Architecture Analysis](#current-architecture-analysis)
 3. [Multiplayer Architecture Design](#multiplayer-architecture-design)
 4. [Required Packages & Dependencies](#required-packages--dependencies)
-5. [Integration with Midnite Oil Boilerplate](#integration-with-midnite-oil-boilerplate)
-6. [Migration Steps](#migration-steps)
-7. [Component-by-Component Migration](#component-by-component-migration)
-8. [Testing Strategy](#testing-strategy)
-9. [Performance Considerations](#performance-considerations)
+5. [Migration Steps](#migration-steps)
+6. [Component-by-Component Migration](#component-by-component-migration)
+7. [Testing Strategy](#testing-strategy)
+8. [Performance Considerations](#performance-considerations)
+9. [Deployment & Hosting](#deployment--hosting)
 10. [Troubleshooting](#troubleshooting)
 
 **📊 Visual Reference**: [Architecture Diagrams](multiplayer-architecture-diagrams.md) - Mermaid diagrams for data flow, component migration, and network architecture
@@ -36,13 +42,16 @@ Single-player 3D space combat game with:
 
 ### Target Multiplayer Type
 
-**Cooperative/Competitive Space Combat**
+**Persistent Multiplayer Space Combat**
 
-- 2-8 players in a shared space environment
-- PvE: Team up against AI enemies
-- PvP: Optional deathmatch/team deathmatch modes
-- Synchronized physics-based gameplay
-- Shared scoring/leaderboard system
+- **Vision**: One persistent server, players join anytime (no lobbies/sessions)
+- **Architecture**: Dedicated server (authoritative, cheat-proof)
+- **Player Count**: 2-50+ players in shared space
+- **Game Modes**: 
+  - PvE: Team up against AI enemies
+  - PvP: Optional deathmatch/team deathmatch modes
+- **World**: Persistent asteroid fields, synchronized physics
+- **Budget**: ~$50-70/month for small server (2 cores, 4GB RAM)
 
 ---
 
@@ -122,56 +131,97 @@ graph TD
 
 ### Network Topology
 
-**Client-Server Architecture** (recommended for authoritative gameplay)
+**Dedicated Server Architecture** (authoritative, professional, scalable)
 
 ```mermaid
 graph TB
-    subgraph Host
-        HS[Server Authority]
-        HC[Host Client]
+    subgraph Unity Multiplay Cloud
+        DS[Dedicated Server<br/>Authoritative]
     end
     
-    C1[Client 1] <-->|Network| HS
-    C2[Client 2] <-->|Network| HS
-    C3[Client 3] <-->|Network| HS
+    C1[Client 1] <-->|Direct Connect| DS
+    C2[Client 2] <-->|Direct Connect| DS
+    C3[Client 3] <-->|Direct Connect| DS
+    C4[Client ...] <-->|Direct Connect| DS
     
-    HS -->|Simulates| AI[AI Enemies]
-    HS -->|Controls| Physics[Physics State]
+    DS -->|Simulates| AI[AI Enemies]
+    DS -->|Controls| Physics[Physics State]
+    DS -->|Validates| Combat[Damage/Combat]
     
-    style HS fill:#ff6b6b
-    style HC fill:#4ecdc4
+    style DS fill:#ff6b6b,stroke:#c0392b,stroke-width:3px
+    style AI fill:#3498db
+    style Physics fill:#3498db
+    style Combat fill:#3498db
 ```
 
 **Key Points**:
 
-- One player acts as Host (server + client)
-- Other players connect as clients
-- Server has authority over game state, AI, and physics
-- Clients have authority over their own input
+- **Dedicated Linux server** runs game simulation (no player hosts)
+- All players are clients (equal latency, no host advantage)
+- **Server has full authority** over game state, AI, physics, damage
+- Clients send input, server validates and replicates state
+- **Persistent world**: Server runs 24/7, players join/leave anytime
+- **Cheat-proof**: All validation server-side
+
+**Why Dedicated Server for Your Vision**:
+
+```
+Your Vision              Dedicated Server    P2P/Lobby
+─────────────────────────────────────────────────────────
+One persistent game      ✅ Yes              ❌ No (sessions)
+Everyone joins anytime   ✅ Direct connect   ❌ Need lobby
+No lobby/session model   ✅ Optional         ❌ Required
+Authoritative server     ✅ Yes              ⚠️ Host-based
+Scalable player count    ✅ 50-100+          ❌ 16 max
+Professional             ✅ Industry std     ⚠️ Indie/casual
+Cheat prevention         ✅ Server validates ❌ Host can cheat
+Cost                     💰 ~$50-70/month    ✅ Free tier
+```
+
+> **Note**: P2P with Lobby/Relay is **not suitable** for "one game everyone joins" vision. See [ecs-and-multiplayer-architecture-analysis](ecs-and-multiplayer-architecture-analysis.md) for detailed comparison.
 
 ### Authority Model
 
 ```mermaid
 graph LR
-    subgraph Server
-        SA[Game State<br/>AI Behavior<br/>Physics<br/>Damage]
+    subgraph Dedicated Server
+        SA[Game State<br/>AI Behavior<br/>Physics<br/>Damage<br/>Spawning]
     end
     
     subgraph Client
-        CA[Player Input<br/>Camera<br/>UI<br/>VFX]
+        CA[Player Input<br/>Camera<br/>UI<br/>VFX<br/>Audio]
     end
     
-    subgraph Replicated
-        R[Position<br/>Health<br/>State]
+    subgraph Replicated to Clients
+        R[Position<br/>Health<br/>State<br/>Score]
     end
     
     SA --> R
-    CA -.RPC.-> SA
+    CA -.ServerRPC.-> SA
+    R -.->|Interpolated| CA
     
-    style SA fill:#ff6b6b
-    style CA fill:#4ecdc4
-    style R fill:#ffe66d
+    style SA fill:#ff6b6b,stroke:#c0392b,stroke-width:2px
+    style CA fill:#4ecdc4,stroke:#16a085,stroke-width:2px
+    style R fill:#ffe66d,stroke:#f39c12,stroke-width:2px
 ```
+
+**Server Authority** (Dedicated Server runs these):
+
+- Game state management
+- AI enemy behavior and spawning
+- Physics simulation (Rigidbody updates)
+- Damage calculation and validation
+- Projectile spawning (server spawns, replicates to clients)
+- Score tracking
+- Floating Origin shifts (server coordinates, replicates to clients)
+
+**Client Authority** (Each client handles these):
+
+- Player input (keyboard/mouse/gamepad)
+- Camera following local player
+- UI rendering (health bars, HUD)
+- VFX and audio (local cosmetic effects)
+- Prediction/interpolation for smooth movement
 
 ### Network Variables Strategy
 
@@ -212,146 +262,143 @@ graph LR
 
 ```json
 {
-  "com.unity.services.core": "1.12.0",
-  "com.unity.services.authentication": "3.3.0",
-  "com.unity.netcode.gameobjects": "2.0.0",
-  "com.unity.services.lobby": "1.2.2",
-  "com.unity.services.relay": "1.1.0",
-  "com.unity.multiplayer.tools": "2.2.1"
+  "com.unity.services.core": "1.12.0+",
+  "com.unity.services.authentication": "3.3.0+",
+  "com.unity.netcode.gameobjects": "2.0.0+",
+  "com.unity.services.multiplay": "1.0.0+",
+  "com.unity.multiplayer.tools": "2.2.1+"
 }
 ```
+
+**Note**: We are **NOT** using Lobby or Relay services (P2P model). For dedicated server:
+
+- ❌ `com.unity.services.lobby` - Not needed (no lobby/session model)
+- ❌ `com.unity.services.relay` - Not needed (clients connect directly to server)
 
 ### Already Installed (Relevant)
 
 - `com.unity.inputsystem`: 1.17.0 ✓
 - `com.unity.multiplayer.center`: 1.0.1 ✓
+- `com.midniteoilsoftware.core`: ✓ (EventBus, Singleton)
 
-### Midnite Oil Software Boilerplate
+### What About Midnite Oil Multiplayer Package?
 
-**GitHub Repository**: [https://github.com/Midnite-Oil-Software-L-L-C/unity_packages/tree/main/Multiplayer](https://github.com/Midnite-Oil-Software-L-L-C/unity_packages/tree/main/Multiplayer)
+**Decision**: ❌ **Skip it**
 
-**Key Components to Use**:
+**Why**: The Midnite Oil multiplayer boilerplate is designed for **P2P with Lobby/Relay** architecture, which contradicts your dedicated server vision.
 
-1. **Connection Management** - Handles UGS authentication, lobby, relay
-2. **Network Manager Setup** - Pre-configured NetworkManager
-3. **Player Spawning** - Network player spawner system
-4. **Session Management** - Lobby creation/joining logic
-5. **UI Templates** - Multiplayer menu UI
+The package provides:
+- Lobby UI boilerplate (not needed - no lobbies)
+- Relay integration helpers (not needed - direct server connection)
+- P2P host/client setup (not needed - dedicated server)
 
----
+**What you need instead**:
+1. Unity Netcode for GameObjects (install)
+2. Unity Gaming Services SDK for Multiplay (install)
+3. Server build configuration (create)
+4. Direct connect or simple matchmaking (implement)
 
-## Integration with Midnite Oil Boilerplate
-
-### Step 1: Import Boilerplate Package
-
-```
-1. Download from GitHub repository
-2. Copy to /Assets/Other/MidniteOilMultiplayer/
-3. Review package structure and documentation
-```
-
-### Step 2: Understand Boilerplate Components
-
-#### Connection Flow (from boilerplate)
-
-```
-1. Authentication → Sign in anonymously to UGS
-2. Lobby Creation/Join → Create or join game lobby
-3. Relay Allocation → Get relay join code for P2P connection
-4. Network Connection → Connect via Netcode + Relay
-5. Player Spawn → Spawn network player objects
-```
-
-#### Key Boilerplate Scripts to Integrate
-
-**ConnectionManager** (adapt for space shooter)
-
-- Handles UGS authentication
-- Manages lobby operations
-- Configures relay transport
-
-**NetworkPlayerSpawner** (extend for ship spawning)
-
-- Server-side player object spawning
-- Player tracking and management
-- Despawn on disconnect
-
-**LobbyUI** (customize for space shooter theme)
-
-- Lobby browser
-- Create/join lobby interface
-- Player list display
-
-**GameStateNetworkManager** (extend for space shooter)
-
-- Network game state synchronization
-- Match start/end logic
-- Player ready states
-
-### Step 3: Customize Boilerplate for Space Shooter
-
-#### Modifications Needed
-
-**Player Spawning**
-
-- Replace default player prefab with Player Ship prefab
-- Add spawn point selection (avoid player collision at spawn)
-- Configure ship ownership and authority
-
-**Lobby Settings**
-
-- Set max players: 2-8
-- Add game mode selection (PvE, PvP, Coop)
-- Add map/scenario selection
-
-**UI Integration**
-
-- Merge boilerplate UI with existing UIManager
-- Add multiplayer-specific HUD elements (player list, ping display)
-- Create pre-game lobby scene
+You already have the core package (`com.midniteoilsoftware.core`) for EventBus and Singleton, which is all you need from Midnite Oil.
 
 ---
 
 ## Migration Steps
 
-### Phase 1: Setup & Configuration (Week 1)
+### Phase 0: Foundation (COMPLETED + 1 item) - 3 days
+
+✅ **COMPLETED** (see [multiplayer-prep](multiplayer-prep.md)):
+
+- Player combat system (DamageHandler, Shield)
+- PlayerManager (spawning, tracking)
+- Object pooling (projectiles, missiles, effects)
+- EventBus integration
+- Architecture analysis
+
+⚠️ **HIGH PRIORITY - TODO**:
+
+- [ ] Implement Floating Origin system (3 days)
+  - **Why**: Solves floating-point precision at large distances
+  - **Required before**: Multiplayer testing at scale
+  - See [ecs-and-multiplayer-architecture-analysis](ecs-and-multiplayer-architecture-analysis.md) for implementation details
+
+### Phase 1: Setup & Configuration - 1 week
 
 #### 1.1 Install Required Packages
 
 ```
-1. Open Package Manager
-2. Add Unity Gaming Services packages via "Add package by name"
-3. Install Netcode for GameObjects
-4. Import Midnite Oil boilerplate to /Assets/Other/
+1. Open Package Manager (Window → Package Manager)
+2. Add packages via "Add package by name":
+   - com.unity.services.core
+   - com.unity.services.authentication  
+   - com.unity.netcode.gameobjects
+   - com.unity.services.multiplay
+   - com.unity.multiplayer.tools
+3. Wait for packages to install and compile
 ```
+
+**DO NOT install**:
+- `com.unity.services.lobby` (not needed for dedicated server)
+- `com.unity.services.relay` (not needed for dedicated server)
 
 #### 1.2 Configure Unity Gaming Services
 
 ```
-1. Link project to Unity Cloud Project (Project Settings → Services)
-2. Enable Authentication service
-3. Enable Lobby service
-4. Enable Relay service
-5. Configure project settings in Unity Dashboard
+1. Link project to Unity Cloud Project:
+   - Edit → Project Settings → Services
+   - Click "Create Unity project ID" or select existing organization
+   - Select or create organization
+
+2. Enable required UGS services in Unity Dashboard:
+   - Go to https://dashboard.unity3d.com
+   - Navigate to your project
+   - Enable: Authentication, Multiplay
+   - Skip: Lobby, Relay (not needed)
+
+3. Note your Project ID (needed for server builds)
 ```
 
 #### 1.3 Setup Network Manager
 
 ```
-1. Create /Assets/Prefabs/NetworkManager prefab
-2. Add NetworkManager component from boilerplate
-3. Configure transport: Unity Transport (Relay compatible)
-4. Set network tick rate: 60Hz
-5. Configure player prefab (will create in Phase 2)
+1. Create NetworkManager GameObject:
+   - Right-click in Hierarchy → Create Empty
+   - Name: "NetworkManager"
+   - Add Component: NetworkManager (from Netcode for GameObjects)
+
+2. Configure NetworkManager:
+   - Transport: Unity Transport
+   - Network Tick Rate: 60Hz
+   - Connection Approval: Enabled (for validation)
+   - Player Prefab: (assign PlayerShip network prefab in Phase 2)
+
+3. Configure Unity Transport:
+   - Connection Type: IP Address
+   - Address: 0.0.0.0 (server listens on all interfaces)
+   - Port: 7777 (or your choice)
+   - Max Payload Size: 6144 bytes (good for space shooter)
+
+4. Save as prefab:
+   - Drag NetworkManager to /Assets/_project/Prefabs/NetworkManager.prefab
+   - Mark DontDestroyOnLoad (already handled by NetworkManager)
 ```
 
-#### 1.4 Create Scene Structure
+#### 1.4 Create Server Build Configuration
 
 ```
-/Assets/_project/Scenes/
-  ├── MainMenu.unity (existing + multiplayer UI)
-  ├── Lobby.unity (new - pre-game lobby)
-  └── Main.unity (existing - gameplay scene)
+1. Create server build target:
+   - File → Build Settings
+   - Target Platform: Dedicated Server
+   - Or create separate build profile for Linux server
+
+2. Add conditional compilation symbols:
+   - Edit → Project Settings → Player
+   - Scripting Define Symbols: Add "DEDICATED_SERVER"
+   - Use #if DEDICATED_SERVER to disable rendering, audio on server
+
+3. Plan scene structure:
+   - Main.unity: Gameplay scene (already exists)
+   - Optional: MainMenu.unity with "Join Server" button
+   - No lobby scene needed (direct connect to server)
 ```
 
 ### Phase 2: Core Multiplayer Foundation (Week 2)
