@@ -668,7 +668,6 @@ Monthly cost (production)                 💰 ~$70-140  💰 Free
 
 **My suggestion based on your message**:
 - Vision: Persistent world, one server, players join anytime
-- Budget: Start small (~$50/month)
 - Timeline: Take time to do it right (6+ months)
 - Architecture: Dedicated server with optional matchmaking later
 

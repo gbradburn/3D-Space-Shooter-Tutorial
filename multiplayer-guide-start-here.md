@@ -22,7 +22,6 @@ This is a **Dedicated Server** model, not P2P with lobbies.
 **What it covers**:
 - Why dedicated server vs P2P
 - Architecture comparison table
-- Cost breakdown (~$50-70/month)
 - Migration roadmap (5-6 weeks)
 - What NOT to use (Midnite Oil multiplayer package)
 
@@ -94,7 +93,6 @@ Use [Full Migration Guide](multiplayer-migration-dedicated-server-full.md) for s
 | **Boilerplate** | Midnite Oil multiplayer | Skip it |
 | **Connection** | Lobby creation/join | Direct server connect |
 | **Persistence** | Session-based | 24/7 server |
-| **Cost** | Free tier | ~$50-70/month |
 
 ---
 
@@ -113,16 +111,6 @@ Use [Full Migration Guide](multiplayer-migration-dedicated-server-full.md) for s
 
 ### ✅ Keep These
 - `com.midniteoilsoftware.core` (EventBus, Singleton - useful!)
-
----
-
-## 💰 Budget
-
-**Free Tier**: $800 credit = ~11 months development
-
-**Target**: $50-70/month for persistent server
-
-**Your budget aligns perfectly with dedicated server approach.**
 
 ---
 

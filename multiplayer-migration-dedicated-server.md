@@ -3,7 +3,6 @@
 **Updated**: Aligned with [ecs-and-multiplayer-architecture-analysis](ecs-and-multiplayer-architecture-analysis.md) recommendations
 
 **Vision**: Persistent world, one server, players join anytime  
-**Budget**: ~$50-70/month  
 **Architecture**: Dedicated Server (Unity Multiplay)
 
 ---
@@ -134,7 +133,6 @@ Cost                     💰 ~$50-70/month    ✅ Free tier
 **Small Server** (2 cores, 4GB RAM):
 - Hourly: ~$0.096
 - Monthly 24/7: ~$70
-- Your budget target: ~$50/month (feasible with optimization)
 
 **Your $800 credit gets you**:
 - ~8,300 hours (~11 months 24/7 on small server)
@@ -143,7 +141,6 @@ Cost                     💰 ~$50-70/month    ✅ Free tier
 **After free tier**:
 - Optimize server resources
 - Consider auto-scaling (spin down when empty)
-- Target $50-70/month fits within budget
 
 ---
 

@@ -5,7 +5,6 @@
 This document is the **updated version** of the multiplayer migration guide, aligned with your vision for a persistent, dedicated server-based multiplayer game.
 
 **Vision**: Persistent world, one server, players join anytime  
-**Budget**: ~$50-70/month  
 **Architecture**: Dedicated Server (Unity Multiplay)
 
 > **📋 Quick Reference**: [Architecture Decision Summary](multiplayer-migration-dedicated-server.md) | [Full Analysis](ecs-and-multiplayer-architecture-analysis.md)
@@ -24,7 +23,6 @@ The original `multiplayer-migration.md` was written for **P2P with Lobby/Relay**
 | **Connection** | Lobby creation/joining | Direct server connect |
 | **Authority** | Host player | Authoritative server |
 | **Persistence** | Session-based | 24/7 server |
-| **Cost** | Free tier | ~$50-70/month |
 
 **Why the change?** Your stated vision: *"develop this as a hosted application using Unity's multiplayer hosting services and have players just join that single game"* = Dedicated Server model.
 
@@ -54,7 +52,6 @@ Single-player 3D space combat game with:
   - PvE: Team up against AI enemies
   - PvP: Optional deathmatch/team deathmatch modes
 - **World**: Persistent asteroid fields, synchronized physics
-- **Budget**: ~$50-70/month for small server (2 cores, 4GB RAM)
 
 ---
 
