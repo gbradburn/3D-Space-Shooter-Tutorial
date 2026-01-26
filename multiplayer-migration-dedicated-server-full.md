@@ -517,8 +517,6 @@ public class NetworkBlaster : NetworkBehaviour
 
 **Small Server** (2 cores, 4GB RAM, Linux):
 - Hourly: ~$0.096
-- Monthly 24/7: ~$70
-- Your target: ~$50/month (achievable with optimization)
 
 **Your $800 credit gets you**:
 - ~8,300 hours (~11.5 months on small server 24/7)
@@ -570,7 +568,6 @@ public class NetworkBlaster : NetworkBehaviour
 | **Persistence** | 24/7 server | Ends when host leaves |
 | **Cheating** | Server validates all | Host can modify state |
 | **Player Limit** | 50-100+ | 16 max (Relay) |
-| **Cost** | $50-70/month | Free tier |
 | **Complexity** | Server build deployment | Lobby UI implementation |
 
 ---
