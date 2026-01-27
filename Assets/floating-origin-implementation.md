@@ -81,31 +81,40 @@ Track "absolute position" separately for persistence
 
 ```
 FloatingOriginManager (Singleton)
-├── Monitors player/reference position
-├── Triggers origin shift when threshold exceeded
+├── Maintains List<ShiftableFloatingOrigin> registeredShiftables
+├── Maintains List<FloatingOriginReference> registeredReferences
+├── Calculates centroid from all reference positions
+├── Triggers origin shift when centroid exceeds threshold
+├── Invokes OnShift() on all registered shiftables
 ├── Raises OriginShiftedEvent via EventBus
 └── Tracks absolute world offset (Vector3Double)
 
-IFloatingOriginReceiver (Interface)
-├── Components implement to handle shifts
-├── OnOriginShift(Vector3 offset) callback
-└── Update internal state during shift
+ShiftableFloatingOrigin (Base Component)
+├── Registers/unregisters with manager on Enable/Disable
+├── virtual OnShift(Vector3 offset) - default: shift transform.position
+├── Specialized subclasses:
+│   ├── ShiftableRigidbody - Shifts Rigidbody.position
+│   ├── ShiftableParticleSystem - Shifts particles + transform
+│   └── ShiftableTrailRenderer - Shifts transform + clears trail
 
-Specialized Handlers
-├── RigidbodyShiftHandler - Shifts physics objects
-├── ParticleSystemShiftHandler - Handles particle systems
-├── TrailRendererShiftHandler - Handles trails
-└── Custom handlers for specific systems
+FloatingOriginReference (Component)
+├── Registers/unregisters with manager on Enable/Disable
+├── Provides position for centroid calculation
+├── Optional weight for weighted averaging (multiplayer)
+└── Single-player: One reference (player ship)
+    Multiplayer: Multiple references averaged
 ```
 
 ### Key Features
 
-- ✅ **Event-driven architecture** (integrates with EventBus)
+- ✅ **Registration-based architecture** (objects explicitly opt-in to shifting)
+- ✅ **No scene traversal** (eliminates brittle object finding)
+- ✅ **Automatic lifecycle management** (register/unregister on Enable/Disable)
+- ✅ **Event-driven** (integrates with EventBus)
 - ✅ **Singleton pattern** (clean manager access)
-- ✅ **Staged implementation** (incremental development)
-- ✅ **Multiplayer-ready** (server/client absolute position tracking)
-- ✅ **Performance-optimized** (minimal overhead, infrequent shifts)
-- ✅ **Extensible** (easy to add custom shift handlers)
+- ✅ **Multiplayer-ready** (centroid calculation from multiple players)
+- ✅ **Performance-optimized** (O(n) where n = registered count, not all objects)
+- ✅ **Extensible** (easy to create specialized shiftable components)
 
 ---
 
@@ -113,24 +122,25 @@ Specialized Handlers
 
 ### Stage 1: Core Foundation (Day 1, ~4 hours)
 
-**Goal**: Basic floating origin system with single player support
+**Goal**: Registration-based floating origin system
 
 - Create `Vector3Double` struct for absolute position tracking
-- Create `FloatingOriginManager` singleton
-- Implement shift threshold detection
+- Create `FloatingOriginManager` singleton with registration lists
+- Create `ShiftableFloatingOrigin` base component
+- Create `FloatingOriginReference` component
+- Implement centroid calculation and shift logic
 - Create `OriginShiftedEvent` for EventBus
-- Shift basic GameObjects (Transform-only)
 
-**Deliverable**: Player can travel 1,000,000+ units without jitter
+**Deliverable**: Objects that register can shift without jitter
 
 ### Stage 2: Physics Integration (Day 1-2, ~4 hours)
 
 **Goal**: Handle Rigidbody objects correctly
 
-- Create `IFloatingOriginReceiver` interface
-- Implement `RigidbodyShiftHandler`
-- Shift all Rigidbodies (preserve velocity/angular velocity)
-- Test with asteroids and ships
+- Create `ShiftableRigidbody` specialized component
+- Test with player ship (Rigidbody)
+- Test with asteroids and projectiles
+- Verify velocity/angular velocity preserved
 
 **Deliverable**: Physics objects maintain correct state during shifts
 
@@ -138,8 +148,8 @@ Specialized Handlers
 
 **Goal**: Handle particle systems, trails, and effects
 
-- Implement `ParticleSystemShiftHandler`
-- Implement `TrailRendererShiftHandler`
+- Implement `ShiftableParticleSystem` component
+- Implement `ShiftableTrailRenderer` component
 - Handle LineRenderer and other visual systems
 - Test with explosions, weapon trails, engine effects
 
@@ -147,21 +157,20 @@ Specialized Handlers
 
 ### Stage 4: Multiplayer Preparation (Day 2-3, ~4 hours)
 
-**Goal**: Implement centroid-based approach for dedicated server multiplayer
+**Goal**: Centroid-based approach for multiple players
 
-- Implement centroid calculation for multiple players
-- Add `EnableMultiplayerMode()` to support single/multi modes
-- Update `CheckAndPerformShift()` for centroid reference
-- Add absolute position tracking to PlayerManager
-- Create `NetworkPositionSync` component (stub for future)
-- Test multiplayer scenarios (players opposite vs. clustered)
-- Enhanced debug GUI showing mode and distances
+- Test centroid calculation with multiple `FloatingOriginReference` objects
+- Add multiplayer mode toggle to manager
+- Test scenario: players at opposite ends (centroid near origin = no shift)
+- Test scenario: players clustered together (centroid far = shift)
+- Add weighted averaging support
+- Enhanced debug GUI showing mode, reference count, centroid distance
 
 **Deliverable**: Multiplayer-ready architecture with centroid balancing
 
 ### Stage 5: Testing & Polish (Day 3, ~2 hours)
 
-**Goal**: Verify system works in all scenarios
+**Goal**: Verify system works in all scenariosll scenarios
 
 - Test at extreme distances (10,000,000+ units)
 - Performance profiling (ensure <1ms shift time)
@@ -257,188 +266,285 @@ public class OriginShiftedEvent
 }
 ```
 
-### 1.3 Create FloatingOriginManager
+### 1.3 Create ShiftableFloatingOrigin Base Component
 
-**File**: `Assets/_project/Scripts/Managers/FloatingOriginManager.cs`
+**File**: `Assets/_project/Scripts/FloatingOrigin/ShiftableFloatingOrigin.cs`
 
 ```csharp
 using UnityEngine;
-using MidniteOilSoftware;
 
-public class FloatingOriginManager : SingletonMonoBehaviour<FloatingOriginManager>
+namespace MidniteOilSoftware.SpaceShooter.FloatingOrigin
 {
-    [Header("Configuration")]
-    [SerializeField] float _shiftThreshold = 5000f;
-    [SerializeField] bool _enableFloatingOrigin = true;
-    [SerializeField] Transform _referenceTransform;
-
-    [Header("Debug")]
-    [SerializeField] bool _showDebugInfo = true;
-    [SerializeField] Vector3Double _absoluteWorldOffset;
-
-    float _lastShiftTime;
-    int _shiftCount;
-
-    public Vector3Double AbsoluteWorldOffset => _absoluteWorldOffset;
-    public int ShiftCount => _shiftCount;
-    public float DistanceFromOrigin => _referenceTransform != null 
-        ? _referenceTransform.position.magnitude 
-        : 0f;
-
-    void Start()
+    public class ShiftableFloatingOrigin : MonoBehaviour
     {
-        if (_referenceTransform == null)
+        protected virtual void OnEnable()
         {
-            _referenceTransform = FindReferenceTransform();
+            FloatingOriginManager.Instance.RegisterShiftable(this);
         }
 
-        _absoluteWorldOffset = Vector3Double.Zero;
-    }
-
-    void LateUpdate()
-    {
-        if (!_enableFloatingOrigin || _referenceTransform == null)
-            return;
-
-        CheckAndPerformShift();
-    }
-
-    void CheckAndPerformShift()
-    {
-        var distance = _referenceTransform.position.magnitude;
-
-        if (distance > _shiftThreshold)
+        protected virtual void OnDisable()
         {
-            var offset = -_referenceTransform.position;
-            PerformOriginShift(offset);
-        }
-    }
-
-    void PerformOriginShift(Vector3 offset)
-    {
-        var startTime = Time.realtimeSinceStartup;
-
-        _absoluteWorldOffset += offset;
-        _shiftCount++;
-        _lastShiftTime = Time.time;
-
-        ShiftAllTransforms(offset);
-
-        var shiftDuration = Time.realtimeSinceStartup - startTime;
-
-        EventBus.Instance.Raise(new OriginShiftedEvent(
-            offset, 
-            _absoluteWorldOffset, 
-            shiftDuration
-        ));
-
-        if (_showDebugInfo)
-        {
-            Debug.Log($"[FloatingOrigin] Shift #{_shiftCount} | " +
-                      $"Offset: {offset} | Duration: {shiftDuration * 1000f:F2}ms | " +
-                      $"Absolute Offset: {_absoluteWorldOffset}");
-        }
-    }
-
-    void ShiftAllTransforms(Vector3 offset)
-    {
-        var allTransforms = FindObjectsByType<Transform>(
-            FindObjectsInactive.Include, 
-            FindObjectsSortMode.None
-        );
-
-        foreach (var t in allTransforms)
-        {
-            if (IsValidShiftTarget(t))
-            {
-                t.position += offset;
-            }
-        }
-    }
-
-    bool IsValidShiftTarget(Transform t)
-    {
-        // Don't shift UI elements
-        if (t.GetComponentInParent<Canvas>() != null)
-            return false;
-
-        // Don't shift camera (it follows player which is already shifted)
-        if (t.GetComponent<Camera>() != null)
-            return false;
-
-        return true;
-    }
-
-    Transform FindReferenceTransform()
-    {
-        // Try to find local player from PlayerManager
-        if (PlayerManager.Instance != null)
-        {
-            var localPlayer = PlayerManager.Instance.GetLocalPlayer();
-            if (localPlayer != null)
-                return localPlayer.transform;
+            if (FloatingOriginManager.Instance)
+                FloatingOriginManager.Instance.UnregisterShiftable(this);
         }
 
-        // Fallback: find player by tag
-        var player = GameObject.FindGameObjectWithTag("Player");
-        if (player != null)
-            return player.transform;
-
-        Debug.LogWarning("[FloatingOrigin] No reference transform found. " +
-                        "Floating origin disabled.");
-        return null;
-    }
-
-    public void SetReferenceTransform(Transform reference)
-    {
-        _referenceTransform = reference;
-        Debug.Log($"[FloatingOrigin] Reference set to: {reference.name}");
-    }
-
-    public Vector3Double GetAbsolutePosition(Vector3 localPosition) =>
-        _absoluteWorldOffset + localPosition;
-
-    public Vector3 GetLocalPosition(Vector3Double absolutePosition) =>
-        (absolutePosition - _absoluteWorldOffset).ToVector3();
-
-    void OnGUI()
-    {
-        if (!_showDebugInfo)
-            return;
-
-        var style = new GUIStyle
+        public virtual void OnShift(Vector3 offset)
         {
-            fontSize = 14,
-            normal = { textColor = Color.white }
-        };
-
-        var distance = DistanceFromOrigin;
-        var color = distance > _shiftThreshold * 0.8f ? Color.yellow : Color.green;
-
-        GUI.color = color;
-        GUI.Label(new Rect(10, 10, 400, 25), 
-            $"Distance from Origin: {distance:F1} / {_shiftThreshold:F0}", style);
-        GUI.Label(new Rect(10, 35, 400, 25), 
-            $"Shifts Performed: {_shiftCount}", style);
-        GUI.Label(new Rect(10, 60, 400, 25), 
-            $"Absolute Offset: {_absoluteWorldOffset}", style);
-        GUI.color = Color.white;
+            transform.position += offset;
+        }
     }
 }
 ```
 
-### 1.4 Setup in Scene
+### 1.4 Create FloatingOriginReference Component
+
+**File**: `Assets/_project/Scripts/FloatingOrigin/FloatingOriginReference.cs`
+
+```csharp
+using UnityEngine;
+
+namespace MidniteOilSoftware.SpaceShooter.FloatingOrigin
+{
+    public class FloatingOriginReference : MonoBehaviour
+    {
+        [SerializeField] float _weight = 1f;
+
+        public Vector3 Position => transform.position;
+        public float Weight => _weight;
+
+        void OnEnable()
+        {
+            FloatingOriginManager.Instance.RegisterReference(this);
+        }
+
+        void OnDisable()
+        {
+            if (FloatingOriginManager.Instance)
+                FloatingOriginManager.Instance.UnregisterReference(this);
+        }
+    }
+}
+```
+
+### 1.5 Create FloatingOriginManager
+
+**File**: `Assets/_project/Scripts/FloatingOrigin/FloatingOriginManager.cs`
+
+```csharp
+using System.Collections.Generic;
+using UnityEngine;
+using MidniteOilSoftware.Core;
+using MidniteOilSoftware.SpaceShooter.Events;
+
+namespace MidniteOilSoftware.SpaceShooter.FloatingOrigin
+{
+    public class FloatingOriginManager : SingletonMonoBehaviour<FloatingOriginManager>
+    {
+        [Header("Shift Settings")]
+        [SerializeField] float _shiftThreshold = 5000f;
+        [SerializeField] bool _enableAutoShift = true;
+
+        [Header("Multiplayer")]
+        [SerializeField] bool _multiplayerMode = false;
+
+        [Header("Debug")]
+        [SerializeField] bool _showDebugGUI = true;
+
+        readonly List<ShiftableFloatingOrigin> _registeredShiftables = new();
+        readonly List<FloatingOriginReference> _registeredReferences = new();
+        
+        Vector3Double _absoluteWorldOffset = Vector3Double.zero;
+        int _totalShiftCount;
+
+        public Vector3Double AbsoluteWorldOffset => _absoluteWorldOffset;
+        public int TotalShiftCount => _totalShiftCount;
+        public int RegisteredShiftableCount => _registeredShiftables.Count;
+        public int RegisteredReferenceCount => _registeredReferences.Count;
+
+        public void RegisterShiftable(ShiftableFloatingOrigin shiftable)
+        {
+            if (!_registeredShiftables.Contains(shiftable))
+            {
+                _registeredShiftables.Add(shiftable);
+                if (_enableDebugLog)
+                    Debug.Log($"Registered shiftable: {shiftable.name} (Total: {_registeredShiftables.Count})");
+            }
+        }
+
+        public void UnregisterShiftable(ShiftableFloatingOrigin shiftable)
+        {
+            _registeredShiftables.Remove(shiftable);
+        }
+
+        public void RegisterReference(FloatingOriginReference reference)
+        {
+            if (!_registeredReferences.Contains(reference))
+            {
+                _registeredReferences.Add(reference);
+                if (_enableDebugLog)
+                    Debug.Log($"Registered reference: {reference.name} (Total: {_registeredReferences.Count})");
+            }
+        }
+
+        public void UnregisterReference(FloatingOriginReference reference)
+        {
+            _registeredReferences.Remove(reference);
+        }
+
+        void LateUpdate()
+        {
+            if (!_enableAutoShift || _registeredReferences.Count == 0) 
+                return;
+
+            var centroid = CalculateCentroid();
+            var distance = centroid.magnitude;
+
+            if (distance >= _shiftThreshold)
+            {
+                PerformOriginShift();
+            }
+        }
+
+        Vector3 CalculateCentroid()
+        {
+            if (_registeredReferences.Count == 0)
+                return Vector3.zero;
+
+            if (!_multiplayerMode && _registeredReferences.Count == 1)
+                return _registeredReferences[0].Position;
+
+            var totalWeight = 0f;
+            var weightedSum = Vector3.zero;
+
+            foreach (var reference in _registeredReferences)
+            {
+                if (reference != null)
+                {
+                    weightedSum += reference.Position * reference.Weight;
+                    totalWeight += reference.Weight;
+                }
+            }
+
+            return totalWeight > 0 ? weightedSum / totalWeight : Vector3.zero;
+        }
+
+        public void PerformOriginShift()
+        {
+            var centroid = CalculateCentroid();
+            var offset = -centroid;
+
+            _absoluteWorldOffset += new Vector3Double(offset);
+
+            foreach (var shiftable in _registeredShiftables)
+            {
+                if (shiftable != null)
+                    shiftable.OnShift(offset);
+            }
+
+            _totalShiftCount++;
+
+            EventBus.Instance.Raise(new OriginShiftedEvent(offset, centroid));
+
+            if (_enableDebugLog)
+            {
+                Debug.Log($"Origin shifted by {offset} | " +
+                          $"Shifted {_registeredShiftables.Count} objects | " +
+                          $"Total shifts: {_totalShiftCount}");
+            }
+        }
+
+        public Vector3Double GetAbsolutePosition(Vector3 localPosition) =>
+            _absoluteWorldOffset + new Vector3Double(localPosition);
+
+        public Vector3 GetLocalPosition(Vector3Double absolutePosition) =>
+            (absolutePosition - _absoluteWorldOffset).ToVector3();
+
+        public void SetMultiplayerMode(bool enabled)
+        {
+            _multiplayerMode = enabled;
+        }
+
+        void OnGUI()
+        {
+            if (!_showDebugGUI) return;
+
+            GUILayout.BeginArea(new Rect(10, 10, 450, 220));
+            GUILayout.BeginVertical("box");
+            
+            GUILayout.Label("<b>Floating Origin System</b>");
+            GUILayout.Label($"Mode: {(_multiplayerMode ? "Multiplayer" : "Single-Player")}");
+            GUILayout.Label($"Registered References: {_registeredReferences.Count}");
+            GUILayout.Label($"Registered Shiftables: {_registeredShiftables.Count}");
+            
+            var centroid = CalculateCentroid();
+            GUILayout.Label($"Centroid Distance: {centroid.magnitude:F2} / {_shiftThreshold:F2}");
+            GUILayout.Label($"Total Shifts: {_totalShiftCount}");
+            GUILayout.Label($"Absolute Offset: {_absoluteWorldOffset}");
+            
+            if (GUILayout.Button("Force Shift Now"))
+            {
+                Debug.Log("Manual shift triggered via GUI button");
+                PerformOriginShift();
+            }
+            
+            GUILayout.EndVertical();
+            GUILayout.EndArea();
+        }
+    }
+}
+```
+
+### 1.6 Setup in Scene
 
 **Steps**:
 
 1. Open your main gameplay scene
 2. Navigate to `/Managers` in hierarchy (or create if missing)
-3. Create empty GameObject: `Floating Origin Manager`
-4. Add `FloatingOriginManager` component
-5. Configure settings:
+3. FloatingOriginManager should already be set up as a singleton
+4. Configure settings in Inspector:
    - **Shift Threshold**: `5000` (adjust based on your game scale)
-   - **Enable Floating Origin**: ✓
-   - **Show Debug Info**: ✓ (for testing, disable in production)
+   - **Enable Auto Shift**: ✓
+   - **Multiplayer Mode**: ☐ (enable when testing multiplayer)
+   - **Show Debug GUI**: ✓ (for testing, disable in production)
+
+### 1.7 Add Components to Player Ship
+
+**Steps**:
+
+1. Open player ship prefab
+2. Add `FloatingOriginReference` component to root
+3. Add `ShiftableRigidbody` component to root (we'll create this in Stage 2)
+4. Save prefab
+
+**Result**: Player ship will register as reference point and shift correctly
+
+### 1.8 Testing Stage 1
+
+**Test Procedure**:
+
+1. Enter Play mode
+2. Observe Debug GUI shows:
+   - Registered References: 1 (player ship)
+   - Registered Shiftables: 0 (none yet, will add in Stage 2)
+3. Use GUI "Jump to Distance" button to teleport player far from origin
+4. Watch console for shift message
+5. Verify player position returns near origin
+6. Check Debug GUI shows shift count incremented
+
+**Expected Result**:
+
+```
+Registered reference: PlayerShip (Total: 1)
+Origin shifted by (-6000, 0, 0) | Shifted 0 objects | Total shifts: 1
+```
+
+**Success Criteria**:
+
+- ✓ Player ship registers as reference on spawn
+- ✓ Shift occurs when threshold exceeded
+- ✓ Player position < 100 units from origin after shift
+- ✓ No errors in console
+- ✓ Debug GUI displays correctly
 6. **Reference Transform**: Leave empty (auto-detects player)
 
 ### 1.5 Testing Stage 1
@@ -470,215 +576,213 @@ Duration: 0.45ms | Absolute Offset: (10000, 0, 0)
 
 ## Stage 2: Physics Integration
 
-### 2.1 Create IFloatingOriginReceiver Interface
+### 2.1 Create ShiftableRigidbody Component
 
-**File**: `Assets/_project/Scripts/Utilities/IFloatingOriginReceiver.cs`
-
-```csharp
-using UnityEngine;
-
-public interface IFloatingOriginReceiver
-{
-    void OnOriginShift(Vector3 offset);
-}
-```
-
-### 2.2 Create RigidbodyShiftHandler
-
-**File**: `Assets/_project/Scripts/FloatingOrigin/RigidbodyShiftHandler.cs`
+**File**: `Assets/_project/Scripts/FloatingOrigin/ShiftableRigidbody.cs`
 
 ```csharp
 using UnityEngine;
-using MidniteOilSoftware;
 
-[RequireComponent(typeof(Rigidbody))]
-public class RigidbodyShiftHandler : MonoBehaviour, IFloatingOriginReceiver
+namespace MidniteOilSoftware.SpaceShooter.FloatingOrigin
 {
-    Rigidbody _rigidbody;
-
-    void Awake()
+    [RequireComponent(typeof(Rigidbody))]
+    public class ShiftableRigidbody : ShiftableFloatingOrigin
     {
-        _rigidbody = GetComponent<Rigidbody>();
-    }
+        Rigidbody _rigidbody;
 
-    void OnEnable()
-    {
-        EventBus.Instance.Subscribe<OriginShiftedEvent>(OnOriginShiftedEvent);
-    }
-
-    void OnDisable()
-    {
-        EventBus.Instance.Unsubscribe<OriginShiftedEvent>(OnOriginShiftedEvent);
-    }
-
-    void OnOriginShiftedEvent(OriginShiftedEvent evt)
-    {
-        OnOriginShift(evt.Offset);
-    }
-
-    public void OnOriginShift(Vector3 offset)
-    {
-        if (_rigidbody == null)
-            return;
-
-        // Shift position (Transform already shifted by manager)
-        // We need to update Rigidbody's internal position
-        _rigidbody.position += offset;
-
-        // Velocities are relative, no need to shift
-        // Angular velocity is relative, no need to shift
-    }
-}
-```
-
-### 2.3 Update FloatingOriginManager for Rigidbodies
-
-**File**: `Assets/_project/Scripts/Managers/FloatingOriginManager.cs`
-
-**Replace** the `ShiftAllTransforms` method:
-
-```csharp
-void ShiftAllTransforms(Vector3 offset)
-{
-    // Shift Rigidbodies first (they handle their own Transform)
-    var rigidbodies = FindObjectsByType<Rigidbody>(
-        FindObjectsInactive.Include, 
-        FindObjectsSortMode.None
-    );
-
-    foreach (var rb in rigidbodies)
-    {
-        if (IsValidShiftTarget(rb.transform))
+        void Awake()
         {
-            rb.position += offset;
+            _rigidbody = GetComponent<Rigidbody>();
         }
-    }
 
-    // Shift remaining transforms (non-Rigidbody objects)
-    var allTransforms = FindObjectsByType<Transform>(
-        FindObjectsInactive.Include, 
-        FindObjectsSortMode.None
-    );
-
-    foreach (var t in allTransforms)
-    {
-        // Skip if has Rigidbody (already shifted above)
-        if (t.GetComponent<Rigidbody>() != null)
-            continue;
-
-        if (IsValidShiftTarget(t))
+        public override void OnShift(Vector3 offset)
         {
-            t.position += offset;
+            if (!_rigidbody) return;
+
+            _rigidbody.position += offset;
+            
+            // Velocities are relative to world space, no modification needed
+            // Angular velocity is also relative, no modification needed
         }
     }
 }
 ```
 
-### 2.4 Add RigidbodyShiftHandler to Prefabs
+**Purpose**: Specialized component for objects with Rigidbody. Updates Rigidbody's internal position which also handles the Transform.
 
-**Prefabs to Update**:
+### 2.2 Add ShiftableRigidbody to Prefabs
 
-- Player ship prefab
-- Enemy ship prefabs
-- Asteroid prefabs
-- Projectile prefabs (if using Rigidbody)
+**Manual Setup**:
 
-**Steps**:
+1. Open `Assets/_project/Prefabs/Ships/PlayerShip.prefab`
+2. Add `ShiftableRigidbody` component to root GameObject
+3. Save prefab
+4. Repeat for all ship prefabs with Rigidbody
+5. Open asteroid prefabs
+6. Add `ShiftableRigidbody` to each asteroid prefab
+7. Save all
 
-1. Open prefab
-2. Select root GameObject
-3. Add `RigidbodyShiftHandler` component
-4. Save prefab
+**Expected**: When objects spawn, Debug GUI should show increased "Registered Shiftables" count
 
-**Optional**: Create editor script to batch-add to all prefabs with Rigidbody
-
-### 2.5 Testing Stage 2
+### 2.3 Testing Stage 2
 
 **Test Procedure**:
 
 1. Enter Play mode
-2. Spawn several asteroids
-3. Fire weapons (create projectiles with Rigidbodies)
-4. Set player position to `(6000, 0, 0)`
-5. Observe origin shift occurs
-6. Verify:
-   - Asteroids maintain rotation/velocity
+2. Observe Debug GUI:
+   - Registered References: 1 (player)
+   - Registered Shiftables: 1+ (player + any other objects)
+3. Spawn several asteroids
+4. Fire weapons (projectiles with Rigidbody)
+5. Observe "Registered Shiftables" count increase
+6. Use "Jump to Distance" button
+7. Verify origin shift occurs
+8. Observe all objects shift together
+9. Verify:
+   - Asteroids maintain rotation and velocity
    - Projectiles maintain trajectory
    - Ship maintains velocity
    - No physics glitches or snapping
 
+**Expected Console Output**:
+
+```
+Registered shiftable: PlayerShip (Total: 1)
+Registered shiftable: Asteroid_01 (Total: 2)
+Registered shiftable: Asteroid_02 (Total: 3)
+Origin shifted by (-6000, 0, 0) | Shifted 3 objects | Total shifts: 1
+```
+
 **Success Criteria**:
 
-- ✓ All Rigidbodies maintain velocity after shift
+- ✓ All Rigidbodies register on spawn
+- ✓ All Rigidbodies unregister on destroy
+- ✓ Rigidbodies maintain velocity after shift
 - ✓ No sudden acceleration/deceleration
 - ✓ Physics collisions still work correctly
-- ✓ No jittering or snapping
+- ✓ No jittering or snapping during shift
 
 ---
 
 ## Stage 3: Visual Effects
 
-### 3.1 Create ParticleSystemShiftHandler
+### 3.1 Create ShiftableParticleSystem Component
 
-**File**: `Assets/_project/Scripts/FloatingOrigin/ParticleSystemShiftHandler.cs`
+**File**: `Assets/_project/Scripts/FloatingOrigin/ShiftableParticleSystem.cs`
 
 ```csharp
 using UnityEngine;
-using MidniteOilSoftware;
 
-[RequireComponent(typeof(ParticleSystem))]
-public class ParticleSystemShiftHandler : MonoBehaviour, IFloatingOriginReceiver
+namespace MidniteOilSoftware.SpaceShooter.FloatingOrigin
 {
-    ParticleSystem _particleSystem;
-    ParticleSystem.Particle[] _particles;
-
-    void Awake()
+    [RequireComponent(typeof(ParticleSystem))]
+    public class ShiftableParticleSystem : ShiftableFloatingOrigin
     {
-        _particleSystem = GetComponent<ParticleSystem>();
-    }
+        ParticleSystem _particleSystem;
+        ParticleSystem.Particle[] _particles;
 
-    void OnEnable()
-    {
-        EventBus.Instance.Subscribe<OriginShiftedEvent>(OnOriginShiftedEvent);
-    }
-
-    void OnDisable()
-    {
-        EventBus.Instance.Unsubscribe<OriginShiftedEvent>(OnOriginShiftedEvent);
-    }
-
-    void OnOriginShiftedEvent(OriginShiftedEvent evt)
-    {
-        OnOriginShift(evt.Offset);
-    }
-
-    public void OnOriginShift(Vector3 offset)
-    {
-        if (_particleSystem == null || !_particleSystem.isPlaying)
-            return;
-
-        // Get current particles
-        var particleCount = _particleSystem.particleCount;
-        if (particleCount == 0)
-            return;
-
-        // Allocate array if needed
-        if (_particles == null || _particles.Length < particleCount)
+        void Awake()
         {
-            _particles = new ParticleSystem.Particle[particleCount];
+            _particleSystem = GetComponent<ParticleSystem>();
         }
 
-        // Get particles
-        _particleSystem.GetParticles(_particles, particleCount);
-
-        // Shift particle positions
-        for (var i = 0; i < particleCount; i++)
+        public override void OnShift(Vector3 offset)
         {
-            _particles[i].position += offset;
+            base.OnShift(offset);  // Shift transform
+
+            if (!_particleSystem || !_particleSystem.isPlaying) return;
+
+            var particleCount = _particleSystem.particleCount;
+            if (particleCount == 0) return;
+
+            if (_particles == null || _particles.Length < particleCount)
+            {
+                _particles = new ParticleSystem.Particle[particleCount];
+            }
+
+            _particleSystem.GetParticles(_particles, particleCount);
+
+            for (var i = 0; i < particleCount; i++)
+            {
+                _particles[i].position += offset;
+            }
+
+            _particleSystem.SetParticles(_particles, particleCount);
+        }
+    }
+}
+```
+
+### 3.2 Create ShiftableTrailRenderer Component
+
+**File**: `Assets/_project/Scripts/FloatingOrigin/ShiftableTrailRenderer.cs`
+
+```csharp
+using UnityEngine;
+
+namespace MidniteOilSoftware.SpaceShooter.FloatingOrigin
+{
+    [RequireComponent(typeof(TrailRenderer))]
+    public class ShiftableTrailRenderer : ShiftableFloatingOrigin
+    {
+        TrailRenderer _trailRenderer;
+
+        void Awake()
+        {
+            _trailRenderer = GetComponent<TrailRenderer>();
         }
 
-        // Apply shifted particles back
-        _particleSystem.SetParticles(_particles, particleCount);
+        public override void OnShift(Vector3 offset)
+        {
+            base.OnShift(offset);  // Shift transform
+
+            // Clear trail to avoid visual artifacts
+            // Trail will regenerate naturally as object moves
+            if (_trailRenderer)
+                _trailRenderer.Clear();
+        }
+    }
+}
+```
+
+### 3.3 Add Components to Prefabs
+
+**Particle Systems**:
+- Engine effects on ships
+- Weapon muzzle flashes
+- Explosion prefabs
+- Environmental effects
+
+**Trail Renderers**:
+- Projectile trails
+- Ship engine trails
+- Any other trail effects
+
+**Steps**:
+1. Open prefab with particle system or trail renderer
+2. Add appropriate `ShiftableParticleSystem` or `ShiftableTrailRenderer` component
+3. Save prefab
+
+### 3.4 Testing Stage 3
+
+**Test Procedure**:
+
+1. Enter Play mode
+2. Spawn objects with particles/trails
+3. Observe effects playing
+4. Trigger origin shift (via GUI or distance)
+5. Verify:
+   - Particle systems continue smoothly
+   - No particle position artifacts
+   - Trails clear and regenerate cleanly
+   - No visual glitches
+
+**Success Criteria**:
+
+- ✓ Particle effects survive shifts
+- ✓ No particle displacement artifacts
+- ✓ Trails clear cleanly on shift
+- ✓ Visual quality maintained
     }
 }
 ```
