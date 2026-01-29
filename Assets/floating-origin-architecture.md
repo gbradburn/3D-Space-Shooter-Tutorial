@@ -458,7 +458,7 @@ flowchart TB
     
     COUNT --> SINGLE{N == 1?}
     
-    SINGLE -->|Yes| CENT1[Centroid = reference[0].position]
+    SINGLE -->|Yes| CENT1["Centroid = reference[0].position"]
     SINGLE -->|No| CENT2[Centroid = Average of all references]
     
     CENT1 --> DIST[Calculate distance = centroid.magnitude]
