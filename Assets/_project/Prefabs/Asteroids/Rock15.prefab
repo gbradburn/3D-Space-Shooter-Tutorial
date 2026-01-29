@@ -15,6 +15,7 @@ GameObject:
   - component: {fileID: -6468118076750653186}
   - component: {fileID: 5962143532768285266}
   - component: {fileID: 95153555200838071}
+  - component: {fileID: -1377491884305836159}
   m_Layer: 12
   m_Name: Rock15
   m_TagString: Untagged
@@ -171,3 +172,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _points: 20
+--- !u!114 &-1377491884305836159
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7497428207499797149}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 03ab3336a57d2a040a17a7a170babdbf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MidniteOilSoftware.SpaceShooter.FloatingOrigin.ShiftableFloatingOrigin
