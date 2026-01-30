@@ -164,7 +164,8 @@ You already have `com.midniteoilsoftware.core` for EventBus and Singleton, which
 - [ ] **Implement Floating Origin** (3 days)
   - **Why**: Solves floating-point precision at large distances
   - **Required before**: Multiplayer testing at scale
-  - See [ecs-and-multiplayer-architecture-analysis](ecs-and-multiplayer-architecture-analysis.md) for implementation
+  - See [ecs-and-multiplayer-architecture-analysis](ecs-and-multiplayer-architecture-analysis.md) for analysis
+  - See [floating-origin-implementation](floating-origin-implementation.md) for implementation plan
 
 ### Phase 1: Setup & Configuration - 1 week
 
@@ -517,8 +518,6 @@ public class NetworkBlaster : NetworkBehaviour
 
 **Small Server** (2 cores, 4GB RAM, Linux):
 - Hourly: ~$0.096
-- Monthly 24/7: ~$70
-- Your target: ~$50/month (achievable with optimization)
 
 **Your $800 credit gets you**:
 - ~8,300 hours (~11.5 months on small server 24/7)
@@ -570,7 +569,6 @@ public class NetworkBlaster : NetworkBehaviour
 | **Persistence** | 24/7 server | Ends when host leaves |
 | **Cheating** | Server validates all | Host can modify state |
 | **Player Limit** | 50-100+ | 16 max (Relay) |
-| **Cost** | $50-70/month | Free tier |
 | **Complexity** | Server build deployment | Lobby UI implementation |
 
 ---
@@ -593,4 +591,5 @@ public class NetworkBlaster : NetworkBehaviour
 - **Architecture Decision**: [multiplayer-migration-dedicated-server](multiplayer-migration-dedicated-server.md)
 - **Full Analysis**: [ecs-and-multiplayer-architecture-analysis](ecs-and-multiplayer-architecture-analysis.md)
 - **Preparation**: [multiplayer-prep](multiplayer-prep.md)
+- **Implementation**: [floating-origin-implementation](floating-origin-implementation.md)
 - **Diagrams**: [multiplayer-architecture-diagrams](multiplayer-architecture-diagrams.md)

@@ -40,7 +40,6 @@ No lobby/session model   ✅ Optional         ❌ Required
 Authoritative server     ✅ Yes              ⚠️ Host-based
 Scalable player count    ✅ 50-100+          ❌ 16 max
 Cheat prevention         ✅ Server validates ❌ Host can cheat
-Cost                     💰 ~$50-70/month    ✅ Free tier
 ```
 
 **Full comparison**: See [ecs-and-multiplayer-architecture-analysis](ecs-and-multiplayer-architecture-analysis.md) Section 3

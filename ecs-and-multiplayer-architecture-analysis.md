@@ -351,18 +351,6 @@ Windows License         $0.046
 Network (per GiB)       $0.14
 Storage (per GiB/month) $0.20
 ```
-
-**Example Server Configurations**:
-```
-Configuration              Hourly Cost    Monthly (24/7)
-─────────────────────────────────────────────────────────
-Small (2 cores, 4GB RAM)   ~$0.096       ~$70
-Medium (4 cores, 8GB RAM)  ~$0.193       ~$140
-Large (8 cores, 16GB RAM)  ~$0.386       ~$280
-
-Note: Network/storage costs additional based on usage
-```
-
 **Free $800 Credit Gets You**:
 - ~8,300 hours on small server (~11.5 months 24/7)
 - ~4,100 hours on medium server (~5.7 months 24/7)
@@ -606,7 +594,6 @@ Authoritative server                      ✅ Yes       ⚠️ Host
 Professional/competitive                  ✅ Yes       ⚠️ Casual
 Persistent world                          ✅ Yes       ❌ No
 Free development period                   ✅ 6 months  ✅ Forever
-Monthly cost (production)                 💰 ~$70-140  💰 Free
 ```
 
 ---
@@ -647,22 +634,16 @@ Monthly cost (production)                 💰 ~$70-140  💰 Free
 
 ## 7. Questions to Answer Before Starting
 
-1. **Budget**: What's acceptable monthly server cost?
-   - Development: $0 for 6 months (free $800 credit)
-   - Hobby: $0-100/month → Single small server, 24/7
-   - Indie: $100-500/month → Multiple servers, auto-scaling
-   - Commercial: $500+/month → Full production setup, multiple regions
-
-2. **Player Count**: How many concurrent players?
+1. **Player Count**: How many concurrent players?
    - 1-16: Single server, always-on
    - 16-50: Multiple servers, matchmaking
    - 50+: Auto-scaling, multiple regions
 
-3. **Game Mode**: Persistent world or match-based?
+2. **Game Mode**: Persistent world or match-based?
    - Persistent: 24/7 server, players drop in/out
    - Match-based: Spin up/down servers per match
 
-4. **Timeline**: Launch date?
+3. **Timeline**: Launch date?
    - 3 months: Focus on core multiplayer, defer ECS
    - 6+ months: Implement ECS first, then multiplayer
 
