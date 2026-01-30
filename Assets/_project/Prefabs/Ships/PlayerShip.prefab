@@ -2553,6 +2553,8 @@ MonoBehaviour:
   _coolDown: 2
   _reloadTime: 10
   _launchSound: {fileID: 8300000, guid: 7a15fc41b1d885940a382f983eb3f01b, type: 3}
+  _initialPoolSize: 10
+  _maxPoolSize: 20
   MissileFired:
     m_PersistentCalls:
       m_Calls: []
@@ -2994,6 +2996,8 @@ MonoBehaviour:
   _coolDown: 2
   _reloadTime: 10
   _launchSound: {fileID: 8300000, guid: 7a15fc41b1d885940a382f983eb3f01b, type: 3}
+  _initialPoolSize: 10
+  _maxPoolSize: 20
   MissileFired:
     m_PersistentCalls:
       m_Calls: []
@@ -8926,6 +8930,8 @@ MonoBehaviour:
   _weakProjectilePrefab: {fileID: -7897133063940397059, guid: 437dd65b72631eb44becc31750ca9528, type: 3}
   _fireSound: {fileID: 8300000, guid: de812cfb519929c4aad9d296f655c81d, type: 3}
   _muzzle: {fileID: 2446496091195567411}
+  _initialPoolSize: 50
+  _maxPoolSize: 100
 --- !u!82 &7027582992920859888
 AudioSource:
   m_ObjectHideFlags: 0
@@ -9233,6 +9239,8 @@ MonoBehaviour:
   _weakProjectilePrefab: {fileID: -7897133063940397059, guid: 437dd65b72631eb44becc31750ca9528, type: 3}
   _fireSound: {fileID: 8300000, guid: de812cfb519929c4aad9d296f655c81d, type: 3}
   _muzzle: {fileID: 2446496092243041631}
+  _initialPoolSize: 50
+  _maxPoolSize: 100
 --- !u!82 &4981261458579102023
 AudioSource:
   m_ObjectHideFlags: 0
@@ -10331,6 +10339,9 @@ GameObject:
   - component: {fileID: 1292858158178274707}
   - component: {fileID: 6994504763358645729}
   - component: {fileID: 6703685119436950642}
+  - component: {fileID: 3850347124265119027}
+  - component: {fileID: 4819348588377949443}
+  - component: {fileID: 5244931368068231418}
   m_Layer: 6
   m_Name: PlayerShip
   m_TagString: Player
@@ -15337,6 +15348,47 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::DestructionWatcher
   _breakOnDisable: 0
   _breakOnDestroy: 0
+--- !u!114 &3850347124265119027
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8547355818315142687}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b222b8aecb0ac2d49a3b501a1b345e3a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MidniteOilSoftware.SpaceShooter.Debugging.FloatingOriginTest
+  _testSpeed: 1000
+  _autoMove: 0
+  _moveDirection: {x: 0, y: 0, z: 1}
+  _jumpDistance: 10000
+--- !u!114 &4819348588377949443
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8547355818315142687}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3a6ed0de881bf554c9aaa8de63a4c5a3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MidniteOilSoftware.SpaceShooter.FloatingOrigin.FloatingOriginReference
+  _weight: 1
+--- !u!114 &5244931368068231418
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8547355818315142687}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: de6997db8ae4f6a499c64df4482e51bd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MidniteOilSoftware.SpaceShooter.FloatingOrigin.ShiftableRigidbody
 --- !u!1 &8818087792477491389
 GameObject:
   m_ObjectHideFlags: 0

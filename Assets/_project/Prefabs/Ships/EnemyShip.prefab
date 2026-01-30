@@ -210,6 +210,8 @@ MonoBehaviour:
   _weakProjectilePrefab: {fileID: 9200453214768287804, guid: 0d668da9e049bfa48a97af26c85705ff, type: 3}
   _fireSound: {fileID: 8300000, guid: de812cfb519929c4aad9d296f655c81d, type: 3}
   _muzzle: {fileID: 7660254873758522783}
+  _initialPoolSize: 50
+  _maxPoolSize: 100
 --- !u!82 &5338082893942378516
 AudioSource:
   m_ObjectHideFlags: 0
@@ -1498,6 +1500,8 @@ MonoBehaviour:
   _weakProjectilePrefab: {fileID: 9200453214768287804, guid: 0d668da9e049bfa48a97af26c85705ff, type: 3}
   _fireSound: {fileID: 8300000, guid: de812cfb519929c4aad9d296f655c81d, type: 3}
   _muzzle: {fileID: 7660254873164069615}
+  _initialPoolSize: 50
+  _maxPoolSize: 100
 --- !u!82 &8415611024438106035
 AudioSource:
   m_ObjectHideFlags: 0
@@ -3235,6 +3239,8 @@ MonoBehaviour:
   _coolDown: 10
   _reloadTime: 30
   _launchSound: {fileID: 8300000, guid: 7a15fc41b1d885940a382f983eb3f01b, type: 3}
+  _initialPoolSize: 10
+  _maxPoolSize: 20
   MissileFired:
     m_PersistentCalls:
       m_Calls: []
@@ -9148,6 +9154,8 @@ MonoBehaviour:
   _coolDown: 10
   _reloadTime: 30
   _launchSound: {fileID: 8300000, guid: 7a15fc41b1d885940a382f983eb3f01b, type: 3}
+  _initialPoolSize: 10
+  _maxPoolSize: 20
   MissileFired:
     m_PersistentCalls:
       m_Calls: []
@@ -9425,6 +9433,7 @@ GameObject:
   - component: {fileID: 120291550687684435}
   - component: {fileID: 1936427476247241661}
   - component: {fileID: 5363862948030593818}
+  - component: {fileID: 3979232976213940909}
   m_Layer: 9
   m_Name: EnemyShip
   m_TagString: Untagged
@@ -9596,6 +9605,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _points: 1000
+--- !u!114 &3979232976213940909
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7775465932746545343}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: de6997db8ae4f6a499c64df4482e51bd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MidniteOilSoftware.SpaceShooter.FloatingOrigin.ShiftableRigidbody
 --- !u!1 &7904983324665742927
 GameObject:
   m_ObjectHideFlags: 0

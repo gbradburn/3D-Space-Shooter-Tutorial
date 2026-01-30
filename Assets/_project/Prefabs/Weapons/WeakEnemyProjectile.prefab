@@ -5,7 +5,7 @@ PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Modification:
-    serializedVersion: 2
+    serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 1128057196, guid: 437dd65b72631eb44becc31750ca9528, type: 3}
@@ -57,7 +57,7 @@ PrefabInstance:
       value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 5890934243719488321, guid: 437dd65b72631eb44becc31750ca9528, type: 3}
-      propertyPath: m_Materials.Array.data[0]
+      propertyPath: 'm_Materials.Array.data[0]'
       value: 
       objectReference: {fileID: 2100000, guid: 2e8333abd072c404caab4a32f7172a82, type: 2}
     - target: {fileID: 5890934243719488335, guid: 437dd65b72631eb44becc31750ca9528, type: 3}
@@ -117,5 +117,27 @@ PrefabInstance:
       value: 10
       objectReference: {fileID: 0}
     m_RemovedComponents: []
+    m_RemovedGameObjects: []
     m_AddedGameObjects: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 5890934244329781310, guid: 437dd65b72631eb44becc31750ca9528, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: -3561263955880904861}
   m_SourcePrefab: {fileID: 100100000, guid: 437dd65b72631eb44becc31750ca9528, type: 3}
+--- !u!1 &4326236691607031807 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5890934244329781310, guid: 437dd65b72631eb44becc31750ca9528, type: 3}
+  m_PrefabInstance: {fileID: 7910902746420246465}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &-3561263955880904861
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4326236691607031807}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 03ab3336a57d2a040a17a7a170babdbf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MidniteOilSoftware.SpaceShooter.FloatingOrigin.ShiftableFloatingOrigin
