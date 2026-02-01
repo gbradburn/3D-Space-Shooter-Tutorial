@@ -5,8 +5,9 @@
 This document is the **updated version** of the multiplayer migration guide, aligned with your vision for a persistent, dedicated server-based multiplayer game.
 
 **Vision**: Persistent world, one server, players join anytime  
-**Budget**: ~$50-70/month  
-**Architecture**: Dedicated Server (Unity Multiplay)
+**Architecture**: Dedicated Server (Edgegap Hosting)
+
+> ⚠️ **Updated March 2026**: Unity Multiplay discontinued. Now using Edgegap for server hosting.
 
 > **📋 Quick Reference**: [Architecture Decision Summary](multiplayer-migration-dedicated-server.md) | [Full Analysis](ecs-and-multiplayer-architecture-analysis.md)
 
@@ -15,16 +16,6 @@ This document is the **updated version** of the multiplayer migration guide, ali
 ## ⚠️ Key Differences from Original Guide
 
 The original `multiplayer-migration.md` was written for **P2P with Lobby/Relay**. This updated guide is for **Dedicated Server**.
-
-| Aspect | Original (P2P) | Updated (Dedicated Server) |
-|--------|----------------|---------------------------|
-| **Architecture** | P2P with host player | Linux dedicated server |
-| **Packages** | Lobby + Relay services | Multiplay service |
-| **Boilerplate** | Midnite Oil multiplayer | Skip it (wrong architecture) |
-| **Connection** | Lobby creation/joining | Direct server connect |
-| **Authority** | Host player | Authoritative server |
-| **Persistence** | Session-based | 24/7 server |
-| **Cost** | Free tier | ~$50-70/month |
 
 **Why the change?** Your stated vision: *"develop this as a hosted application using Unity's multiplayer hosting services and have players just join that single game"* = Dedicated Server model.
 
@@ -60,30 +51,33 @@ Single-player 3D space combat game with:
 
 ## Multiplayer Architecture Design
 
-### Network Topology: Dedicated Server
+### Network Topology: Dedicated Server (Edgegap)
 
 ```
-Unity Multiplay Cloud
-├── Dedicated Linux Server (Authoritative)
-│   ├── Runs game simulation 24/7
+Edgegap Edge Network
+├── Dedicated Linux Server (Containerized, Authoritative)
+│   ├── Runs game simulation for active sessions
+│   ├── Auto-spawned via Arbiter matchmaking
 │   ├── Validates all player actions
 │   ├── Controls AI, physics, damage
 │   └── Replicates state to clients
 │
 └── Clients (equal peers)
-    ├── Client 1 → Server (direct connect)
-    ├── Client 2 → Server (direct connect)
-    ├── Client 3 → Server (direct connect)
-    └── Client N → Server (direct connect)
+    ├── Client 1 → Server (low-latency edge connection)
+    ├── Client 2 → Server (low-latency edge connection)
+    ├── Client 3 → Server (low-latency edge connection)
+    └── Client N → Server (low-latency edge connection)
 ```
 
 **Key Points**:
 
-- **Dedicated Linux server** runs game simulation (no player hosts)
+- **Dedicated Linux server** in Docker container (no player hosts)
+- Deployed to Edgegap's edge network (closest to players for low latency)
 - All players are clients (equal latency, no host advantage)
 - **Server has full authority** over game state, AI, physics, damage
 - Clients send input, server validates and replicates state
-- **Persistent world**: Server runs 24/7, players join/leave anytime
+- **Session-based**: Edgegap spins up servers on-demand via Arbiter matchmaking
+- **Auto-scaling**: Servers shut down when empty to save costs
 - **Cheat-proof**: All validation server-side
 
 ### Authority Model
@@ -111,19 +105,29 @@ Unity Multiplay Cloud
 ### Unity Gaming Services Packages
 
 **Install These**:
+
 ```json
 {
   "com.unity.services.core": "1.12.0+",
   "com.unity.services.authentication": "3.3.0+",
+  "com.unity.services.multiplayer": "1.0.0+",
   "com.unity.netcode.gameobjects": "2.0.0+",
-  "com.unity.services.multiplay": "1.0.0+",
+  "com.unity.dedicated-server": "1.0.0+",
   "com.unity.multiplayer.tools": "2.2.1+"
 }
 ```
 
-**DO NOT Install** (P2P model - not needed):
-- ❌ `com.unity.services.lobby` - Not needed (no lobby/session model)
-- ❌ `com.unity.services.relay` - Not needed (clients connect directly to server)
+**Edgegap Plugin** (install from GitHub):
+
+```
+https://github.com/edgegap/edgegap-unity-plugin.git
+```
+
+**DO NOT Install** (deprecated or not needed):
+
+- ❌ `com.unity.services.multiplay` - DEPRECATED (Unity Multiplay discontinued March 2026)
+- ❌ `com.unity.services.lobby` - Not needed (use Edgegap Arbiter for matchmaking)
+- ❌ `com.unity.services.relay` - Not needed (direct connection to dedicated server)
 
 ### Already Installed
 
@@ -143,10 +147,12 @@ The package provides:
 - P2P host/client setup (not needed - dedicated server)
 
 **What you need instead**:
+
 1. Unity Netcode for GameObjects ✅
-2. Unity Gaming Services SDK for Multiplay ✅
-3. Server build configuration (create)
-4. Direct connect or simple matchmaking (implement)
+2. Unity Multiplayer Services package ✅
+3. Unity Dedicated Server package (Unity 6) ✅
+4. Edgegap Unity Plugin for containerization ✅
+5. Edgegap Arbiter for matchmaking (built-in)
 
 You already have `com.midniteoilsoftware.core` for EventBus and Singleton, which is all you need from Midnite Oil.
 

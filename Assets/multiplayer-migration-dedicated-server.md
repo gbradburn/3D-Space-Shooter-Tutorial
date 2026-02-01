@@ -1,10 +1,11 @@
 # Multiplayer Migration: Dedicated Server Architecture
 
-**Updated**: Aligned with [ecs-and-multiplayer-architecture-analysis](ecs-and-multiplayer-architecture-analysis.md) recommendations
+**Updated**: Aligned with architecture analysis recommendations
 
 **Vision**: Persistent world, one server, players join anytime  
-**Budget**: ~$50-70/month  
-**Architecture**: Dedicated Server (Unity Multiplay)
+**Architecture**: Dedicated Server (Edgegap Hosting)
+
+> ⚠️ **Updated March 2026**: Unity Multiplay discontinued. Now using Edgegap for server hosting.
 
 ---
 
@@ -21,10 +22,10 @@ Based on comprehensive analysis, this project will use **Dedicated Server** arch
 - Host player runs server
 
 **NOW** (updated plan):
-- Dedicated server (Unity Multiplay)
+- Dedicated server (Edgegap hosting)
 - Skip Midnite Oil multiplayer package
-- Direct server connection
-- Authoritative Linux server
+- Direct server connection via Edgegap matchmaking
+- Authoritative Linux server with Docker containerization
 
 ### Why Dedicated Server?
 
@@ -41,10 +42,8 @@ No lobby/session model   ✅ Optional         ❌ Required
 Authoritative server     ✅ Yes              ⚠️ Host-based
 Scalable player count    ✅ 50-100+          ❌ 16 max
 Cheat prevention         ✅ Server validates ❌ Host can cheat
-Cost                     💰 ~$50-70/month    ✅ Free tier
+Full comparison: See  Section 3
 ```
-
-**Full comparison**: See [ecs-and-multiplayer-architecture-analysis](ecs-and-multiplayer-architecture-analysis.md) Section 3
 
 ---
 
@@ -56,32 +55,72 @@ Cost                     💰 ~$50-70/month    ✅ Free tier
 - Player combat, PlayerManager, Object pooling, EventBus
 - Architecture analysis complete
 
-⚠️ **TODO**:
-- [ ] **Implement Floating Origin** (3 days) - REQUIRED before multiplayer
+✅ **COMPLETED**:
+
+- [x] **Implement Floating Origin** (3 days) - REQUIRED before multiplayer
   - Solves floating-point precision at large distances
   - Essential for persistent world
   - See architecture analysis for implementation
 
+### Phase 0.5: Authentication Setup - 2 days
+
+**Why**: Secure player identity for persistent world, score tracking, anti-cheat
+
+**Authentication Type**: Username/Password with account registration
+
+**Packages**:
+- `com.unity.services.core`
+- `com.unity.services.authentication`
+
+**Tasks**:
+1. Install Unity Authentication packages
+2. Link project to Unity Cloud (Project Settings → Services)
+3. Create `AuthenticationManager` with username/password sign-in/sign-up
+4. Create `LoginUIManager` with login and registration UI
+5. Build login scene with input validation
+6. Implement connection approval with token validation
+7. Create `ClientConnectionManager` to send auth data
+8. Store authenticated player ID and username in `NetworkPlayerData`
+
+**Features**:
+- User account registration and login
+- Session persistence (auto-login on subsequent launches)
+- Password requirements (8+ chars, mixed case, numbers)
+- Username requirements (3-20 chars, alphanumeric)
+- Client and server-side validation
+
+**Result**: Players create accounts or login before connecting, servers validate tokens
+
 ### Phase 1: Multiplayer Setup - 1 week
 
 **Packages to Install**:
-- ✅ `com.unity.netcode.gameobjects`
-- ✅ `com.unity.services.core`
-- ✅ `com.unity.services.authentication`
-- ✅ `com.unity.services.multiplay`
-- ✅ `com.unity.multiplayer.tools`
 
-**DO NOT Install**:
-- ❌ `com.unity.services.lobby` (not needed)
-- ❌ `com.unity.services.relay` (not needed)
-- ❌ Midnite Oil multiplayer package (wrong architecture)
+- ✅ `com.unity.services.core` - Unity Gaming Services foundation
+- ✅ `com.unity.services.authentication` - Player authentication
+- ✅ `com.unity.netcode.gameobjects` - Core networking library
+- ✅ `com.unity.services.multiplayer` - UGS multiplayer services (includes Netcode)
+- ✅ `com.unity.dedicated-server` - Unity 6 dedicated server package (Multiplayer Role feature)
+- ✅ `com.unity.multiplayer.tools` - Network debugging and profiling
+- ✅ Edgegap Unity Plugin (from GitHub) - Server containerization and deployment
+
+**DO NOT Install** (deprecated/unnecessary):
+
+- ❌ `com.unity.services.multiplay` - DEPRECATED (Unity Multiplay discontinued)
+- ❌ `com.unity.services.lobby` - Not needed for dedicated server
+- ❌ `com.unity.services.relay` - Not needed for dedicated server
+- ❌ Midnite Oil multiplayer package - Wrong architecture (P2P)
 
 **Tasks**:
-1. Install UGS packages
-2. Configure NetworkManager (Unity Transport, 60Hz tick)
-3. Link project to Unity Cloud
-4. Enable Authentication & Multiplay services
-5. Create server build configuration
+
+1. Install Unity Authentication (Phase 0.5 - already done)
+2. Install Multiplayer Services and Netcode for GameObjects
+3. Install Dedicated Server package (Unity 6)
+4. Install Edgegap Unity Plugin from GitHub
+5. Configure NetworkManager (Unity Transport, 60Hz tick, Connection Approval enabled)
+6. Add `NetworkAuthValidator` component to NetworkManager
+7. Set up Multiplayer Role for assets (automatic stripping)
+8. Create Edgegap account and API token
+9. Configure server build settings (Linux Dedicated Server)
 
 ### Phase 2: Core Networking - 2 weeks
 
@@ -109,14 +148,19 @@ Cost                     💰 ~$50-70/month    ✅ Free tier
 ### Phase 4: Deployment - 1 week
 
 **Server build**:
-- Create headless Linux build (no rendering)
-- Configure dedicated server flags
-- Test locally (ParrelSync for multi-client testing)
 
-**Deploy to Unity Multiplay**:
-- Upload server build to UGS
-- Configure fleet (server instances)
-- Set up matchmaking or direct connect
+- Use File → Build Settings → Dedicated Server platform
+- Configure Multiplayer Role for asset stripping
+- Use `#if !UNITY_SERVER` for client-only code
+- Test locally with Multiplayer Play Mode (Window → Multiplayer → Multiplayer Play Mode)
+
+**Deploy to Edgegap**:
+
+- Configure Edgegap Unity Plugin with API token
+- Build and containerize Linux server (Docker)
+- Push container to Edgegap registry
+- Configure Arbiter matchmaking
+- Deploy to edge nodes closest to players
 - Test with multiple clients
 
 **Total Timeline**: 5-6 weeks (excluding Floating Origin)
@@ -125,25 +169,24 @@ Cost                     💰 ~$50-70/month    ✅ Free tier
 
 ## Cost Breakdown
 
-### Unity Multiplay Pricing
+### Edgegap Pricing
 
 **Free Tier**:
-- $800 credit for 6 months
-- Covers development + initial launch
 
-**Small Server** (2 cores, 4GB RAM):
-- Hourly: ~$0.096
-- Monthly 24/7: ~$70
-- Your budget target: ~$50/month (feasible with optimization)
+- 400 free server-hours per month
+- Perfect for development and testing
 
-**Your $800 credit gets you**:
-- ~8,300 hours (~11 months 24/7 on small server)
-- Perfect for development and beta testing
+**Small Server** (2 vCPU, 2GB RAM):
 
-**After free tier**:
-- Optimize server resources
-- Consider auto-scaling (spin down when empty)
-- Target $50-70/month fits within budget
+- Pay-as-you-go: ~$0.45/hour
+- Commitment plans available for lower rates
+
+**Cost optimization**:
+
+- Auto-scaling: Servers spin down when empty
+- Pay only for active game sessions
+- No minimum commitment required
+- Edgegap's Arbiter automatically manages server lifecycle
 
 ---
 
@@ -184,26 +227,37 @@ Everything else for multiplayer comes from Unity packages.
 
 ## Next Steps
 
-1. ✅ Review architecture analysis: [ecs-and-multiplayer-architecture-analysis](ecs-and-multiplayer-architecture-analysis.md)
-2. ⚠️ **Implement Floating Origin** (3 days) - HIGH PRIORITY
-3. Install UGS packages for dedicated server
-4. Set up NetworkManager
-5. Follow migration steps in main guide: [multiplayer-migration](multiplayer-migration.md)
+1. ✅ Review architecture analysis
+2. ✅ **Implement Floating Origin** (COMPLETED)
+3. Install Unity Authentication packages (Phase 0.5)
+4. Implement player authentication and connection approval
+5. Install Multiplayer Services and Dedicated Server packages
+6. Install Edgegap Unity Plugin from GitHub
+7. Set up NetworkManager with Unity Transport and authentication
+8. Configure Multiplayer Role for asset stripping
+9. Follow migration steps in full guide
 
 ---
 
 ## Reference Documents
 
-- **Architecture Analysis**: [ecs-and-multiplayer-architecture-analysis](ecs-and-multiplayer-architecture-analysis.md)
+- **Architecture Analysis**:
   - Full P2P vs Dedicated Server comparison
   - Cost analysis and budget planning
   - ECS recommendations
   - Floating Origin implementation
-
-- **Preparation Checklist**: [multiplayer-prep](multiplayer-prep.md)
+- **Preparation Checklist**:
   - Phase 0 foundation systems (100% complete)
   - Floating Origin requirement
   - Next priority tasks
+- **Full Migration Guide**:
+  - Component-by-component conversion
+  - Code examples
+  - Testing strategy
+- **Architecture Diagrams**:
+  - Visual network topology
+  - Data flow diagrams
+  - Authority model
 
 - **Full Migration Guide**: [multiplayer-migration](multiplayer-migration.md)
   - Component-by-component conversion
