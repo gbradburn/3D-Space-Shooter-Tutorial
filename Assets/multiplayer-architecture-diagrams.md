@@ -63,30 +63,48 @@ graph TD
 
 ---
 
+## Scene Architecture
+
+**Client Build** (2 scenes):
+- `Login` scene - Authentication UI (client-only, excluded from server build)
+- `Main` scene - Game scene with multiplayer gameplay
+
+**Server Build** (1 scene):
+- `Main` scene only - Game scene (no Login scene)
+
+**Build Profile Configuration**:
+- Login scene is excluded from Dedicated Server build profile
+- Server boots directly into Main scene
+- Clients boot into Login scene, then load Main after authentication
+
+---
+
 ## Authentication Flow (Username/Password)
 
 ```mermaid
 sequenceDiagram
     participant Client
+    participant LoginScene as Login Scene
     participant LoginUI
     participant AuthManager as AuthenticationManager
     participant UnityAuth as Unity Authentication
+    participant MainScene as Main Scene
     participant NetworkManager
     participant Server
     participant Validator as NetworkAuthValidator
     
-    Note over Client: Game Launch
-    Client->>AuthManager: Start() - Initialize Unity Services
+    Note over Client: Game Launch → Login Scene
+    LoginScene->>AuthManager: Start() - Initialize Unity Services
     AuthManager->>UnityAuth: UnityServices.InitializeAsync()
     UnityAuth-->>AuthManager: Services Ready
     
     AuthManager->>AuthManager: Check IsSignedIn
     
     alt Already Signed In (Cached Session)
-        AuthManager-->>Client: OnAuthenticationSuccess
-        Client->>Client: Load Main Menu (skip login)
+        AuthManager-->>LoginScene: OnAuthenticationSuccess
+        LoginScene->>MainScene: SceneManager.LoadScene("Main")
     else Not Signed In
-        Client->>LoginUI: Show Login/Register Screen
+        LoginScene->>LoginUI: Show Login/Register UI
         
         Note over LoginUI: Player Action
         
@@ -100,7 +118,7 @@ sequenceDiagram
                 UnityAuth-->>AuthManager: Player ID created
                 AuthManager->>AuthManager: Store PlayerName = username
                 AuthManager-->>LoginUI: OnAuthenticationSuccess(PlayerId)
-                LoginUI->>Client: Load Main Menu
+                LoginUI->>MainScene: SceneManager.LoadScene("Main")
             else Failure
                 UnityAuth-->>AuthManager: Error (Account exists, invalid format, etc)
                 AuthManager-->>LoginUI: OnAuthenticationFailed(friendly error)
@@ -116,7 +134,7 @@ sequenceDiagram
                 UnityAuth-->>AuthManager: Player ID + Access Token
                 AuthManager->>AuthManager: Store PlayerName = username
                 AuthManager-->>LoginUI: OnAuthenticationSuccess(PlayerId)
-                LoginUI->>Client: Load Main Menu
+                LoginUI->>MainScene: SceneManager.LoadScene("Main")
             else Failure
                 UnityAuth-->>AuthManager: Error (Invalid credentials)
                 AuthManager-->>LoginUI: OnAuthenticationFailed("Invalid username or password")
@@ -125,17 +143,20 @@ sequenceDiagram
         end
     end
     
-    Note over Client: Player clicks "Join Game"
-    Client->>Client: ClientConnectionManager.ConnectToServer()
-    Client->>AuthManager: Get PlayerId, PlayerName, AccessToken
-    AuthManager-->>Client: Auth data
+    Note over MainScene: Main Scene Loaded (Client)
+    Note over MainScene: Player clicks "Join Game"
+    MainScene->>MainScene: ClientConnectionManager.ConnectToServer()
+    MainScene->>AuthManager: Get PlayerId, PlayerName, AccessToken
+    AuthManager-->>MainScene: Auth data
     
-    Client->>Client: Create AuthConnectionData payload
-    Client->>Client: Serialize to JSON bytes
-    Client->>NetworkManager: Set ConnectionData = payload
-    Client->>NetworkManager: StartClient()
+    MainScene->>MainScene: Create AuthConnectionData payload
+    MainScene->>MainScene: Serialize to JSON bytes
+    MainScene->>NetworkManager: Set ConnectionData = payload
+    MainScene->>NetworkManager: StartClient()
     
     NetworkManager->>Server: Connection Request + Payload
+    
+    Note over Server: Server Boot → Main Scene Only
     Server->>Validator: ConnectionApprovalCallback invoked
     Validator->>Validator: Deserialize JSON payload
     Validator->>Validator: Extract PlayerId, Token, PlayerName
@@ -158,6 +179,8 @@ sequenceDiagram
 
 **Key Features**:
 
+- **Dedicated Login Scene**: Separate scene for authentication (client-only)
+- **Build Profile Separation**: Login scene excluded from server build
 - **Session Persistence**: Auto-login on subsequent launches
 - **Client-side Validation**: Username/password format checked before sending
 - **Server-side Validation**: Token validated on connection approval
@@ -370,12 +393,13 @@ graph TD
 
 ```mermaid
 graph TD
-    Start[Player Launches Game] --> Init[AuthenticationManager.Start]
+    Start[Player Launches Game<br/>Client-Only] --> LoadLogin[Load Login Scene]
+    LoadLogin --> Init[AuthenticationManager.Start]
     Init --> InitServices[UnityServices.InitializeAsync]
     InitServices --> CheckCache{IsSignedIn?}
     
     CheckCache -->|Yes| AutoLogin[Load Cached Session]
-    AutoLogin --> Menu[Main Menu]
+    AutoLogin --> LoadMain[SceneManager.LoadScene Main]
     
     CheckCache -->|No| LoginUI[Show Login/Register UI]
     
@@ -392,7 +416,7 @@ graph TD
     ValidLogin -->|Yes| StoreSession[Store PlayerId & PlayerName]
     ValidReg -->|Yes| StoreSession
     
-    StoreSession --> Menu
+    StoreSession --> LoadMain
     
     ValidLogin -->|No| LoginError[Show Friendly Error]
     ValidReg -->|No| RegError[Show Friendly Error]
@@ -400,7 +424,8 @@ graph TD
     LoginError --> LoginUI
     RegError --> LoginUI
     
-    Menu --> FindMatch[Click Find Match/Join Game]
+    LoadMain --> MainScene[Main Scene Loaded]
+    MainScene --> FindMatch[Click Find Match/Join Game]
     FindMatch --> Arbiter[Edgegap Arbiter Matchmaking]
     
     Arbiter --> Check{Server Available?}
@@ -432,7 +457,7 @@ graph TD
     SetIdentity --> GameStart[Game Start - Authenticated]
     
     Reject --> ShowError[Connection Rejected]
-    ShowError --> Menu
+    ShowError --> MainScene
     
     GameStart --> Playing[Player In Game]
     Playing --> Disconnect{Player Leaves?}
@@ -446,10 +471,12 @@ graph TD
     Shutdown --> Done[Server Terminated]
     
     style Start fill:#8e44ad,stroke:#6c3483,stroke-width:2px,color:#fff
+    style LoadLogin fill:#9b59b6,stroke:#7d3c98,stroke-width:2px,color:#fff
     style LoginUI fill:#3498db,stroke:#2980b9,stroke-width:2px,color:#fff
     style Login fill:#16a085,stroke:#117a65,stroke-width:2px,color:#fff
     style Register fill:#16a085,stroke:#117a65,stroke-width:2px,color:#fff
-    style Menu fill:#2d89ef,stroke:#1a5490,stroke-width:2px,color:#fff
+    style LoadMain fill:#9b59b6,stroke:#7d3c98,stroke-width:2px,color:#fff
+    style MainScene fill:#2d89ef,stroke:#1a5490,stroke-width:2px,color:#fff
     style Arbiter fill:#e74c3c,stroke:#c0392b,stroke-width:2px,color:#fff
     style Docker fill:#34495e,stroke:#2c3e50,stroke-width:2px,color:#fff
     style Edge fill:#e74c3c,stroke:#c0392b,stroke-width:2px,color:#fff
@@ -461,6 +488,8 @@ graph TD
 
 **Architecture Highlights**:
 
+- **Login Scene**: Dedicated client-only scene for authentication (excluded from server build)
+- **Build Profile Separation**: Server boots directly to Main scene, clients to Login scene
 - **Session Persistence**: Cached login tokens for seamless re-authentication
 - **Edgegap Arbiter**: Auto-scaling matchmaking with server lifecycle management
 - **Docker Containers**: Servers run in isolated containers deployed to edge nodes

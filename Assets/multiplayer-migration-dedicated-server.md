@@ -68,6 +68,8 @@ Full comparison: See  Section 3
 
 **Authentication Type**: Username/Password with account registration
 
+**Scene Architecture**: Dedicated Login scene (client-only)
+
 **Packages**:
 - `com.unity.services.core`
 - `com.unity.services.authentication`
@@ -75,12 +77,34 @@ Full comparison: See  Section 3
 **Tasks**:
 1. Install Unity Authentication packages
 2. Link project to Unity Cloud (Project Settings → Services)
-3. Create `AuthenticationManager` with username/password sign-in/sign-up
-4. Create `LoginUIManager` with login and registration UI
-5. Build login scene with input validation
-6. Implement connection approval with token validation
-7. Create `ClientConnectionManager` to send auth data
-8. Store authenticated player ID and username in `NetworkPlayerData`
+3. **Create Login scene** (client-only):
+   - Create new scene: `Assets/_project/Scenes/Login.unity`
+   - Add to Build Settings (index 0 - first scene to load)
+   - Configure Build Profile to exclude from Dedicated Server build
+4. Create `AuthenticationManager` singleton with username/password sign-in/sign-up
+   - Lives in Login scene, persists via DontDestroyOnLoad
+5. Create `LoginUIManager` with login and registration UI
+   - Canvas with username/password input fields
+   - Login and Register buttons
+   - Error message display
+   - Loading state indicators
+6. Implement input validation (client-side)
+   - Username: 3-20 chars, alphanumeric
+   - Password: 8-30 chars, mixed case + numbers
+7. Implement scene transition on successful auth
+   - On success: `SceneManager.LoadScene("Main")`
+   - On cached session: Auto-load Main scene
+8. Create `NetworkAuthValidator` for server-side token validation
+   - Attach to NetworkManager in Main scene
+   - Implement ConnectionApprovalCallback
+9. Create `ClientConnectionManager` to send auth payload
+   - Serializes PlayerId, PlayerName, AccessToken to JSON
+   - Sets NetworkConfig.ConnectionData before StartClient()
+10. Create `NetworkPlayerData` NetworkBehaviour
+    - Stores authenticated PlayerId and PlayerName per player
+11. **Configure Build Profiles**:
+    - Client Build: Includes Login + Main scenes
+    - Dedicated Server Build: Main scene only (Login excluded)
 
 **Features**:
 - User account registration and login
@@ -88,8 +112,9 @@ Full comparison: See  Section 3
 - Password requirements (8+ chars, mixed case, numbers)
 - Username requirements (3-20 chars, alphanumeric)
 - Client and server-side validation
+- **Login scene excluded from server build** (via Build Profiles)
 
-**Result**: Players create accounts or login before connecting, servers validate tokens
+**Result**: Players authenticate in Login scene before Main scene loads, servers skip Login and boot directly to Main
 
 ### Phase 1: Multiplayer Setup - 1 week
 
